@@ -15,6 +15,7 @@ public class Personagem {
     // Status de combate
     private int pontosDeVidaAtuais;
     private final int pontosDeVidaMaximos;
+    private boolean armaTravada = false; // Novo campo para controlar a arma
 
     public Personagem(String nome, int nex, Classe classe, Arma arma, Ritual ritual) {
         this.nome = nome;
@@ -23,7 +24,7 @@ public class Personagem {
         this.arma = arma;
         this.ritual = ritual;
 
-        // Cálculo de PV simplificado, sem atributos
+        // Cálculo de PV simplificado
         int niveis = nex / 5;
         this.pontosDeVidaMaximos = (classe.getPVIniciais() * niveis);
         this.pontosDeVidaAtuais = this.pontosDeVidaMaximos;
@@ -47,6 +48,20 @@ public class Personagem {
 
     public boolean estaVivo() {
         return this.pontosDeVidaAtuais > 0;
+    }
+
+    // --- Métodos para Arma Travada ---
+
+    public boolean isArmaTravada() {
+        return armaTravada;
+    }
+
+    public void setArmaTravada(boolean travada) {
+        this.armaTravada = travada;
+    }
+
+    public void destravarArma() {
+        this.armaTravada = false;
     }
 
     // --- Getters ---
@@ -82,7 +97,6 @@ public class Personagem {
         }
 
         System.out.println("\n--- Perícias ---");
-        // Chamada de perícias simplificada, sem Intelecto
         List<String> pericias = new ArrayList<>(classe.getPericiasTreinadas());
         System.out.println("Perícias Treinadas: " + pericias);
 

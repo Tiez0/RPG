@@ -3,7 +3,7 @@
  * Agilidade, Força, Intelecto, Presença e Vigor.
  */
 public class Atributos {
-
+//LEMBRAR DE FAZER MAIS TARDE OS ATRIBUTOS DE ROLAGEM NEGATIVA!!!!!!!!!!!
     private final int agilidade;
     private final int forca;
     private final int intelecto;

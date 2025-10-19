@@ -39,7 +39,6 @@ public class Main {
     }
 
     private static Personagem criarPersonagem(Scanner scanner, String tituloJogador) {
-        // Limpa o buffer do scanner
         if (tituloJogador.equals("Jogador 1") || tituloJogador.equals("Jogador")) {
             scanner.nextLine(); 
         }
@@ -56,59 +55,29 @@ public class Main {
         if (classe instanceof Combatente || classe instanceof Especialista) {
             arma = escolherArma(scanner, classe, nex);
         } else if (classe instanceof Ocultista) {
-            arma = new Arma("Adaga Ritualística", "1d6");
+            arma = new Arma("Adaga Ritualística", "1d6", "2d6", 10, 20);
             ritual = escolherRitual(scanner, nex);
         }
 
-        // Atributos foram removidos, então não há mais distribuição de pontos.
-
-        // Construtor simplificado sem Atributos
+        // Construtor simplificado, sem Atributos ou Origem
         return new Personagem(nome, nex, classe, arma, ritual);
-    }
-
-    private static int escolherNEX(Scanner scanner) {
-        System.out.println("\nDefina o Nível de Exposição Paranormal (NEX).");
-        int[] nexOptions = {5, 15, 25, 30, 45, 50};
-        
-        System.out.println("Escolha um dos níveis de NEX disponíveis:");
-        for (int i = 0; i < nexOptions.length; i++) {
-            System.out.println((i + 1) + ": NEX " + nexOptions[i] + "%");
-        }
-
-        while (true) {
-            try {
-                System.out.print("Digite o número da opção de NEX: ");
-                int escolha = scanner.nextInt();
-                if (escolha > 0 && escolha <= nexOptions.length) {
-                    return nexOptions[escolha - 1];
-                } else {
-                    System.out.println("Opção inválida.");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida. Por favor, digite um número.");
-                scanner.next();
-            }
-        }
     }
 
     private static Arma escolherArma(Scanner scanner, Classe classe, int nex) {
         if (classe instanceof Combatente) {
             System.out.println("\nComo um Combatente, escolha sua arma inicial:");
-            System.out.println("1: Machado (Dano: 1d8)");
-            System.out.println("2: Katana (Dano: 1d10)");
-            if (nex >= 50) {
-                System.out.println("3: Ereshkigal (Dano: 2d12) - Requer NEX 50%");
-            }
+            System.out.println("1: Machado (Acerto: 12+, Crítico: 20)");
+            System.out.println("2: Katana (Acerto: 10+, Crítico: 19+)");
+            if (nex >= 50) System.out.println("3: Ereshkigal (Acerto: 2+, Crítico: 15+)");
 
             while (true) {
                 try {
                     System.out.print("Digite o número da arma: ");
                     int escolha = scanner.nextInt();
                     switch (escolha) {
-                        case 1: return new Arma("Machado", "1d8");
-                        case 2: return new Arma("Katana", "1d10");
-                        case 3:
-                            if (nex >= 50) return new Arma("Ereshkigal", "2d12");
+                        case 1: return new Arma("Machado", "1d8", "3d8", 12, 20);
+                        case 2: return new Arma("Katana", "1d10", "19", 10, 19);
+                        case 3: if (nex >= 50) return new Arma("Ereshkigal", "2d12", "4d12", 2, 15);
                         default: System.out.println("Opção inválida.");
                     }
                 } catch (InputMismatchException e) {
@@ -118,23 +87,20 @@ public class Main {
             }
         } else if (classe instanceof Especialista) {
             System.out.println("\nComo um Especialista, escolha sua arma inicial:");
-            System.out.println("1: Besta (Dano: 1d8)");
-            System.out.println("2: Revólver (Dano: 2d6)");
-            System.out.println("3: Fuzil de Caça (Dano: 2d8)");
-            if (nex >= 50) {
-                System.out.println("4: Fuzil de Precisão Abutre (Dano: 2d10) - Requer NEX 50%");
-            }
+            System.out.println("1: Besta (Acerto: 11+, Crítico: 20)");
+            System.out.println("2: Revólver (Acerto: 10+, Crítico: 19+)");
+            System.out.println("3: Fuzil de Caça (Acerto: 12+, Crítico: 19+)");
+            if (nex >= 50) System.out.println("4: Fuzil de Precisão Abutre (Acerto: 12+, Crítico: 18+)");
 
             while (true) {
                 try {
                     System.out.print("Digite o número da arma: ");
                     int escolha = scanner.nextInt();
                     switch (escolha) {
-                        case 1: return new Arma("Besta", "1d8");
-                        case 2: return new Arma("Revólver", "2d6");
-                        case 3: return new Arma("Fuzil de Caça", "2d8");
-                        case 4:
-                            if (nex >= 50) return new Arma("Fuzil de Precisão Abutre", "2d10");
+                        case 1: return new Arma("Besta", "1d8", "19", 11, 20);
+                        case 2: return new Arma("Revólver", "2d6", "6d6", 10, 19);
+                        case 3: return new Arma("Fuzil de Caça", "2d8", "4d8", 12, 19);
+                        case 4: if (nex >= 50) return new Arma("Fuzil de Precisão Abutre", "2d10", "10d10", 12, 18);
                         default: System.out.println("Opção inválida.");
                     }
                 } catch (InputMismatchException e) {
@@ -146,6 +112,7 @@ public class Main {
         return null;
     }
 
+    // --- LÓGICA DE COMBATE E OUTROS MÉTODOS (sem alterações) ---
     private static void iniciarCombatePvP(Scanner scanner, Personagem j1, Personagem j2) {
         System.out.println("\n========================================");
         System.out.println("INÍCIO DO COMBATE: " + j1.getNome() + " vs " + j2.getNome());
@@ -202,59 +169,131 @@ public class Main {
 
     private static void realizarTurnoJogador(Scanner scanner, Personagem atacante, Object alvo) {
         System.out.println("\nÉ o turno de " + atacante.getNome() + ".");
-        System.out.println("1: Atacar com Arma");
-        if (atacante.getRitual() != null) {
-            System.out.println("2: Usar Ritual Principal");
-        }
+        atacante.destravarArma();
 
-        int escolha = 0;
-        while (escolha != 1 && (atacante.getRitual() == null || escolha != 2)) {
+        System.out.println("1: Mochila");
+        System.out.println("2: Atacar");
+        int acao = 0;
+        while (acao != 1 && acao != 2) {
             try {
                 System.out.print("Escolha sua ação: ");
-                escolha = scanner.nextInt();
-                if (escolha != 1 && (atacante.getRitual() == null || escolha != 2)) {
-                    System.out.println("Ação inválida.");
-                }
+                acao = scanner.nextInt();
             } catch (InputMismatchException e) {
                 System.out.println("Entrada inválida.");
                 scanner.next();
             }
         }
 
-        if (escolha == 1) { // Atacar com Arma
-            Arma arma = atacante.getArma();
-            System.out.println(atacante.getNome() + " ataca com " + arma.getNome() + "!");
-            int dano = rolarDadoCentralizado(scanner, arma.getDano());
-            if (alvo instanceof Personagem) ((Personagem) alvo).receberDano(dano);
-            if (alvo instanceof Inimigo) ((Inimigo) alvo).receberDano(dano);
-            System.out.println("Dano causado: " + dano);
-        } else { // Usar Ritual
-            Ritual ritual = atacante.getRitual();
-            System.out.println(atacante.getNome() + " conjura o ritual " + ritual.getNome() + "!");
-            Matcher m = Pattern.compile("(\\d+d\\d+(?:\\+\\d+)?)").matcher(ritual.getDescricao());
-            if (m.find()) {
-                String expressao = m.group(1);
-                int valor = rolarDadoCentralizado(scanner, expressao);
-                if (ritual.getNome().contains("Cicatrização")) {
-                    atacante.receberCura(valor);
-                    System.out.println(atacante.getNome() + " curou " + valor + " pontos de vida!");
-                } else {
-                    if (alvo instanceof Personagem) ((Personagem) alvo).receberDano(valor);
-                    if (alvo instanceof Inimigo) ((Inimigo) alvo).receberDano(valor);
-                    System.out.println("Dano causado: " + valor);
+        if (acao == 1) {
+            System.out.println("\n--- Mochila de " + atacante.getNome() + " ---");
+            if (atacante.getArma() != null) System.out.println("- Arma: " + atacante.getArma());
+            if (atacante.getRitual() != null) System.out.println("- Ritual: " + atacante.getRitual());
+            System.out.println("------------------------");
+            System.out.println("(Visualizar a mochila gasta o turno)");
+            return;
+        }
+
+        if (atacante.isArmaTravada()) {
+            System.out.println("Sua arma está travada! Você perde o turno tentando consertá-la.");
+            return;
+        }
+
+        if (atacante.getClasse() instanceof Ocultista) {
+            System.out.println("1: Atacar com Adaga Ritualística");
+            System.out.println("2: Usar Ritual Principal");
+            int tipoAtaque = 0;
+            while (tipoAtaque != 1 && tipoAtaque != 2) {
+                try {
+                    System.out.print("Escolha o tipo de ataque: ");
+                    tipoAtaque = scanner.nextInt();
+                } catch (InputMismatchException e) {
+                    System.out.println("Entrada inválida.");
+                    scanner.next();
                 }
-            } else {
-                System.out.println("O ritual não tem um efeito de combate direto simulável.");
             }
+            if (tipoAtaque == 1) {
+                resolverAtaqueComArma(scanner, atacante, alvo);
+            } else {
+                usarRitual(scanner, atacante, alvo);
+            }
+        } else {
+            resolverAtaqueComArma(scanner, atacante, alvo);
         }
     }
 
-    private static void realizarTurnoInimigo(Scanner scanner, Inimigo atacante, Personagem alvo) {
-        System.out.println("\nÉ o turno de " + atacante.getNome() + ".");
-        System.out.println(atacante.getNome() + " ataca!");
-        int dano = Dado.rolar(atacante.getDano());
-        alvo.receberDano(dano);
-        System.out.println("Dano causado: " + dano);
+    private static void resolverAtaqueComArma(Scanner scanner, Personagem atacante, Object alvo) {
+        Arma arma = atacante.getArma();
+        System.out.println("\n" + atacante.getNome() + " prepara um ataque com " + arma.getNome() + "!");
+        System.out.println("Faça seu teste de ataque (1d20).");
+        int testeDeAtaque = rolarDadoCentralizado(scanner, "1d20");
+
+        if (testeDeAtaque == 1) {
+            resolverFalhaCritica(scanner, atacante);
+        } else if (testeDeAtaque >= arma.getCriticoMinimo()) {
+            System.out.println("ACERTO CRÍTICO! Dano massivo!");
+            int dano = rolarDadoCentralizado(scanner, arma.getDanoCritico());
+            aplicarDano(alvo, dano);
+            System.out.println("Dano CRÍTICO causado: " + dano);
+        } else if (testeDeAtaque >= arma.getAcertoMinimo()) {
+            System.out.println("Acerto! Rolando o dano...");
+            int dano = rolarDadoCentralizado(scanner, arma.getDano());
+            aplicarDano(alvo, dano);
+            System.out.println("Dano causado: " + dano);
+        } else {
+            System.out.println("ERROU! O ataque não atingiu o alvo.");
+        }
+    }
+
+    private static void resolverFalhaCritica(Scanner scanner, Personagem atacante) {
+        System.out.println("FALHA CRÍTICA! O ataque deu terrivelmente errado.");
+        System.out.println("Escolha a consequência:");
+        System.out.println("1: A arma trava e fica inutilizável no próximo turno.");
+        System.out.println("2: O ataque se volta contra você.");
+        int consequencia = 0;
+        while (consequencia != 1 && consequencia != 2) {
+            try {
+                System.out.print("Escolha 1 ou 2: ");
+                consequencia = scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida.");
+                scanner.next();
+            }
+        }
+        if (consequencia == 1) {
+            atacante.setArmaTravada(true);
+            System.out.println("Sua arma travou!");
+        } else {
+            int danoProprio = rolarDadoCentralizado(scanner, atacante.getArma().getDano());
+            atacante.receberDano(danoProprio);
+            System.out.println(atacante.getNome() + " se atrapalha e recebe " + danoProprio + " de dano!");
+        }
+    }
+
+    private static void aplicarDano(Object alvo, int dano) {
+        if (alvo instanceof Personagem) {
+            ((Personagem) alvo).receberDano(dano);
+        } else if (alvo instanceof Inimigo) {
+            ((Inimigo) alvo).receberDano(dano);
+        }
+    }
+
+    private static void usarRitual(Scanner scanner, Personagem atacante, Object alvo) {
+        Ritual ritual = atacante.getRitual();
+        System.out.println(atacante.getNome() + " conjura o ritual " + ritual.getNome() + "!");
+        Matcher m = Pattern.compile("(\\d+d\\d+(?:\\+\\d+)?)").matcher(ritual.getDescricao());
+        if (m.find()) {
+            String expressao = m.group(1);
+            int valor = rolarDadoCentralizado(scanner, expressao);
+            if (ritual.getNome().contains("Cicatrização")) {
+                atacante.receberCura(valor);
+                System.out.println(atacante.getNome() + " curou " + valor + " pontos de vida!");
+            } else {
+                aplicarDano(alvo, valor);
+                System.out.println("Dano do ritual: " + valor);
+            }
+        } else {
+            System.out.println("O ritual não tem um efeito de combate direto simulável.");
+        }
     }
 
     private static int rolarDadoCentralizado(Scanner scanner, String expressao) {
@@ -393,6 +432,31 @@ public class Main {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Entrada inválida.");
+                scanner.next();
+            }
+        }
+    }
+
+    private static int escolherNEX(Scanner scanner) {
+        System.out.println("\nDefina o Nível de Exposição Paranormal (NEX).");
+        int[] nexOptions = {5, 15, 25, 30, 45, 50};
+        
+        System.out.println("Escolha um dos níveis de NEX disponíveis:");
+        for (int i = 0; i < nexOptions.length; i++) {
+            System.out.println((i + 1) + ": NEX " + nexOptions[i] + "%");
+        }
+
+        while (true) {
+            try {
+                System.out.print("Digite o número da opção de NEX: ");
+                int escolha = scanner.nextInt();
+                if (escolha > 0 && escolha <= nexOptions.length) {
+                    return nexOptions[escolha - 1];
+                } else {
+                    System.out.println("Opção inválida.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida. Por favor, digite um número.");
                 scanner.next();
             }
         }
