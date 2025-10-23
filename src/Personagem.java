@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Representa um personagem simplificado do RPG, com nome, classe, arma e ritual.
  */
@@ -9,24 +6,31 @@ public class Personagem {
     private final String nome;
     private final int nex;
     private final Classe classe;
+    private final Atributos atributos;
     private final Arma arma;
     private final Ritual ritual;
 
     // Status de combate
     private int pontosDeVidaAtuais;
     private final int pontosDeVidaMaximos;
-    private boolean armaTravada = false; // Novo campo para controlar a arma
+    private boolean armaTravada = false;
 
-    public Personagem(String nome, int nex, Classe classe, Arma arma, Ritual ritual) {
+    public Personagem(String nome, int nex, Classe classe, Atributos atributos, Arma arma, Ritual ritual) {
         this.nome = nome;
         this.nex = nex;
         this.classe = classe;
+        this.atributos = atributos;
         this.arma = arma;
         this.ritual = ritual;
 
-        // Cálculo de PV simplificado
-        int niveis = nex / 5;
-        this.pontosDeVidaMaximos = (classe.getPVIniciais() * niveis);
+        int vidaBase = classe.getPVIniciais();
+        int bonusVigor;
+        if (classe instanceof Combatente) {
+            bonusVigor = atributos.getVigor() * 10;
+        } else {
+            bonusVigor = atributos.getVigor() * 7;
+        }
+        this.pontosDeVidaMaximos = vidaBase + bonusVigor;
         this.pontosDeVidaAtuais = this.pontosDeVidaMaximos;
     }
 
@@ -70,6 +74,7 @@ public class Personagem {
     public int getPontosDeVidaAtuais() { return pontosDeVidaAtuais; }
     public int getPontosDeVidaMaximos() { return pontosDeVidaMaximos; }
     public Classe getClasse() { return classe; }
+    public Atributos getAtributos() { return atributos; }
     public Arma getArma() { return arma; }
     public Ritual getRitual() { return ritual; }
     public int getNex() { return nex; }
@@ -83,6 +88,9 @@ public class Personagem {
         System.out.println("NEX: " + nex + "%");
         System.out.println("Classe: " + classe.getNome());
 
+        System.out.println("\n--- Atributos ---");
+        System.out.println(atributos);
+
         System.out.println("\n--- Status ---");
         System.out.println("PV: " + pontosDeVidaAtuais + " / " + pontosDeVidaMaximos);
 
@@ -95,14 +103,6 @@ public class Personagem {
         if (ritual != null) {
             System.out.println("Ritual Principal: " + ritual);
         }
-
-        System.out.println("\n--- Perícias ---");
-        List<String> pericias = new ArrayList<>(classe.getPericiasTreinadas());
-        System.out.println("Perícias Treinadas: " + pericias);
-
-        System.out.println("\n--- Habilidades e Poderes ---");
-        System.out.println("Proficiências: " + classe.getProficiencias());
-        System.out.println("Habilidades de Classe: " + classe.getHabilidades(nex));
         System.out.println("---------------------------");
     }
 }
