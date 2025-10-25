@@ -13,26 +13,30 @@ public class Main {
         System.out.println("--- Bem-vindo ao Ordem Paranormal RPG (Versão Simplificada) ---");
 
         String modoDeJogo = escolherModoDeJogo(scanner);
-        escolherModoDeRolagem(scanner);
 
-        if (modoDeJogo.equals("pvp")) {
-            System.out.println("\n--- CRIAÇÃO DO JOGADOR 1 ---");
-            Personagem jogador1 = criarPersonagem(scanner, "Jogador 1");
-            jogador1.exibirFicha();
+        if (modoDeJogo.equals("historia")) {
+            ModoHistoria.iniciar(scanner);
+        } else {
+            escolherModoDeRolagem(scanner);
+            if (modoDeJogo.equals("pvp")) {
+                System.out.println("\n--- CRIAÇÃO DO JOGADOR 1 ---");
+                Personagem jogador1 = criarPersonagem(scanner, "Jogador 1");
+                jogador1.exibirFicha();
 
-            System.out.println("\n--- CRIAÇÃO DO JOGADOR 2 ---");
-            Personagem jogador2 = criarPersonagem(scanner, "Jogador 2");
-            jogador2.exibirFicha();
+                System.out.println("\n--- CRIAÇÃO DO JOGADOR 2 ---");
+                Personagem jogador2 = criarPersonagem(scanner, "Jogador 2");
+                jogador2.exibirFicha();
 
-            iniciarCombatePvP(scanner, jogador1, jogador2);
+                iniciarCombatePvP(scanner, jogador1, jogador2);
 
-        } else { // Modo PVM
-            System.out.println("\n--- CRIAÇÃO DE PERSONAGEM ---");
-            Personagem jogador = criarPersonagem(scanner, "Jogador");
-            jogador.exibirFicha();
+            } else { // Modo PVM
+                System.out.println("\n--- CRIAÇÃO DE PERSONAGEM ---");
+                Personagem jogador = criarPersonagem(scanner, "Jogador");
+                jogador.exibirFicha();
 
-            Inimigo inimigo = escolherInimigo(scanner);
-            iniciarCombatePvM(scanner, jogador, inimigo);
+                Inimigo inimigo = escolherInimigo(scanner);
+                iniciarCombatePvM(scanner, jogador, inimigo);
+            }
         }
 
         scanner.close();
@@ -443,6 +447,7 @@ public class Main {
         System.out.println("\nEscolha o modo de jogo:");
         System.out.println("1: PvP (Jogador vs Jogador)");
         System.out.println("2: PvM (Jogador vs Máquina)");
+        System.out.println("3: Modo História");
 
         while (true) {
             try {
@@ -450,7 +455,8 @@ public class Main {
                 int escolha = scanner.nextInt();
                 if (escolha == 1) return "pvp";
                 if (escolha == 2) return "pvm";
-                System.out.println("Opção inválida. Por favor, escolha 1 ou 2.");
+                if (escolha == 3) return "historia";
+                System.out.println("Opção inválida. Por favor, escolha 1, 2 ou 3.");
             } catch (InputMismatchException e) {
                 System.out.println("Entrada inválida. Por favor, digite um número.");
                 scanner.next();

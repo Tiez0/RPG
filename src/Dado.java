@@ -3,22 +3,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Uma classe utilitária para simular rolagens de dados de RPG ou retornar valores fixos.
+ * uma classe utilitaria para simular rolagens de dados de rpg ou retornar valores fixos.
  */
 public class Dado {
 
     private static final Random random = new Random();
 
     /**
-     * Rola dados com base em uma expressão (ex: "2d6", "1d20+5") ou retorna um valor fixo.
+     * rola dados com base em uma expressao (ex: "2d6", "1d20+5") ou retorna um valor fixo.
      *
-     * @param expressao A string que representa a rolagem do dado ou um número fixo (ex: "19").
-     * @return O resultado da rolagem/valor, ou 0 se a expressão for inválida.
+     * @param expressao a string que representa a rolagem do dado ou um numero fixo (ex: "19").
+     * @return o resultado da rolagem/valor, ou 0 se a expressao for invalida.
      */
     public static int rolar(String expressao) {
-        expressao = expressao.replaceAll("\\s", ""); // Remove espaços
+        expressao = expressao.replaceAll("\\s", ""); // remove espacos
 
-        // Padrão para extrair os números da expressão (ex: 3d8+3)
+        // padrao para extrair os numeros da expressao (ex: 3d8+3)
         Pattern pattern = Pattern.compile("(\\d+)d(\\d+)(?:\\+(\\d+))?");
         Matcher matcher = pattern.matcher(expressao);
 
@@ -30,18 +30,18 @@ public class Dado {
 
                 int total = 0;
                 for (int i = 0; i < numeroDeDados; i++) {
-                    total += random.nextInt(facesDoDado) + 1; // +1 porque nextInt(N) vai de 0 a N-1
+                    total += random.nextInt(facesDoDado) + 1; // +1 porque nextint(n) vai de 0 a n-1
                 }
                 return total + modificador;
             } catch (NumberFormatException e) {
-                return 0; // Improvável, mas seguro
+                return 0; // improvavel, mas seguro
             }
         } else {
-            // Se não for uma expressão de dado, tenta converter para um número fixo
+            // se nao for uma expressao de dado, tenta converter para um numero fixo
             try {
                 return Integer.parseInt(expressao);
             } catch (NumberFormatException e) {
-                return 0; // Retorna 0 se a expressão for totalmente inválida
+                return 0; // retorna 0 se a expressao for totalmente invalida
             }
         }
     }
