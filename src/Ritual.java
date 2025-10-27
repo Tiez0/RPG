@@ -1,39 +1,28 @@
-/**
- * Representa um ritual que um Ocultista pode usar, com regras de sucesso e falha.
- */
-public class Ritual {
-    private final String nome;
-    private final String descricao;
+// representa um ritual que um ocultista pode usar, com regras de sucesso e falha.
+public class Ritual extends Item {
     private final String efeito;
     private final int sucessoMinimo;
     private final String penalidadeFalha;
 
-    /**
-     * Construtor para criar um novo ritual com regras de combate.
-     *
-     * @param nome            O nome do ritual.
-     * @param descricao       A descrição completa do efeito do ritual.
-     * @param efeito          A fórmula de dano ou cura (ex: 3d8+3).
-     * @param sucessoMinimo   O valor mínimo no d20 para o ritual funcionar.
-     * @param penalidadeFalha O dano que o ocultista sofre em caso de falha.
-     */
+    // construtor para criar um novo ritual com regras de combate.
     public Ritual(String nome, String descricao, String efeito, int sucessoMinimo, String penalidadeFalha) {
-        this.nome = nome;
-        this.descricao = descricao;
+        super(nome, descricao, 1); // rituais sao unicos, entao a quantidade e sempre 1
         this.efeito = efeito;
         this.sucessoMinimo = sucessoMinimo;
         this.penalidadeFalha = penalidadeFalha;
     }
 
-    // Getters
-    public String getNome() { return nome; }
-    public String getDescricao() { return descricao; }
+    // getters
     public String getEfeito() { return efeito; }
     public int getSucessoMinimo() { return sucessoMinimo; }
     public String getPenalidadeFalha() { return penalidadeFalha; }
 
     @Override
-    public String toString() {
-        return nome + " (" + descricao + ")";
+    public void exibirDetalhes() {
+        System.out.println("\n--- " + getNome() + " ---");
+        System.out.println("descricao: " + getDescricao());
+        System.out.println("efeito: " + efeito);
+        System.out.println("sucesso: " + sucessoMinimo + "+");
+        System.out.println("penalidade por falha: " + penalidadeFalha);
     }
 }

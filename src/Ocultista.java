@@ -1,7 +1,5 @@
-/**
- * Representa a classe Ocultista.
- * Um estudioso do paranormal que usa rituais, com menos pontos de vida.
- */
+// representa a classe ocultista.
+// um estudioso do paranormal que usa rituais, com menos pontos de vida.
 public class Ocultista extends Classe {
 
     @Override

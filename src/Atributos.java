@@ -1,24 +1,20 @@
-/**
- * Representa os cinco atributos básicos de um personagem:
- * Agilidade, Força, Intelecto, Presença e Vigor.
- */
+// representa os cinco atributos basicos de um personagem:
+// agilidade, forca, intelecto, presenca e vigor.
 public class Atributos {
-//LEMBRAR DE FAZER MAIS TARDE OS ATRIBUTOS DE ROLAGEM NEGATIVA!!!!!!!!!!!
+//lembrar de fazer mais tarde os atributos de rolagem negativa!!!!!!!!!!!
     private final int agilidade;
     private final int forca;
     private final int intelecto;
     private final int presenca;
     private final int vigor;
 
-    /**
-     * Construtor para inicializar os atributos de um personagem.
-     *
-     * @param agilidade Define a coordenação motora, velocidade de reação e destreza.
-     * @param forca     Determina a potência muscular e habilidade atlética.
-     * @param intelecto Mede o raciocínio, memória e educação geral.
-     * @param presenca  Define os sentidos, força de vontade e habilidades sociais.
-     * @param vigor     Determina a saúde e resistência física.
-     */
+    // construtor para inicializar os atributos de um personagem.
+    //
+    // @param agilidade define a coordenacao motora, velocidade de reacao e destreza.
+    // @param forca     determina a potencia muscular e habilidade atletica.
+    // @param intelecto mede o raciocinio, memoria e educacao geral.
+    // @param presenca  define os sentidos, forca de vontade e habilidades sociais.
+    // @param vigor     determina a saude e resistencia fisica.
     public Atributos(int agilidade, int forca, int intelecto, int presenca, int vigor) {
         this.agilidade = agilidade;
         this.forca = forca;
@@ -27,7 +23,7 @@ public class Atributos {
         this.vigor = vigor;
     }
 
-    // Getters para cada atributo
+    // getters para cada atributo
 
     public int getAgilidade() {
         return agilidade;

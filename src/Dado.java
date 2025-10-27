@@ -2,19 +2,15 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * uma classe utilitaria para simular rolagens de dados de rpg ou retornar valores fixos.
- */
+// uma classe utilitaria para simular rolagens de dados de rpg ou retornar valores fixos.
 public class Dado {
 
     private static final Random random = new Random();
 
-    /**
-     * rola dados com base em uma expressao (ex: "2d6", "1d20+5") ou retorna um valor fixo.
-     *
-     * @param expressao a string que representa a rolagem do dado ou um numero fixo (ex: "19").
-     * @return o resultado da rolagem/valor, ou 0 se a expressao for invalida.
-     */
+    // rola dados com base em uma expressao (ex: "2d6", "1d20+5") ou retorna um valor fixo.
+    //
+    // @param expressao a string que representa a rolagem do dado ou um numero fixo (ex: "19").
+    // @return o resultado da rolagem/valor, ou 0 se a expressao for invalida.
     public static int rolar(String expressao) {
         expressao = expressao.replaceAll("\\s", ""); // remove espacos
 

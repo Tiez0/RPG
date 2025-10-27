@@ -1,30 +1,25 @@
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Classe responsável por fornecer dados sobre os rituais disponíveis no jogo.
- */
+// classe responsavel por fornecer dados sobre os rituais disponiveis no jogo.
 public class RitualData {
 
-    /**
-     * Retorna uma lista de rituais disponíveis com base no Nível de Exposição Paranormal (NEX).
-     *
-     * @param nex O NEX do personagem.
-     * @return Uma lista de rituais.
-     */
+    // retorna uma lista de rituais disponiveis com base no nivel de exposicao paranormal (nex).
+    //
+    // @param nex o nex do personagem.
+    // @return uma lista de rituais.
     public static List<Ritual> getRitualsDisponiveis(int nex) {
         List<Ritual> rituais = new ArrayList<>();
 
-        // Rituais básicos, sempre disponíveis
-        rituais.add(new Ritual("Cicatrização", "Cura 3d8+3 pontos de vida.", "3d8+3", 10, "1d4"));
-        rituais.add(new Ritual("Eco Espiral", "Copia o ataque de um alvo.", "Copia ataque", 12, "1d6"));
-        rituais.add(new Ritual("Decadência", "Causa 2d8+2 de dano.", "2d8+2", 10, "1d4"));
-        rituais.add(new Ritual("Ritual Vodum", "Sacrifica PV para causar 2d6 de dano.", "2d6", 13, "2d4"));
+        // rituais basicos, sempre disponiveis
+        rituais.add(new Ritual("Cicatrização", "uma onda de cura vinda diretamente do outro lado.", "3d8+3", 10, "1d4"));
+        rituais.add(new Ritual("Eco Espiral", "eco eco eco eco........", "Copia ataque", 12, "1d6"));
+        rituais.add(new Ritual("Decadência", "decaenzia put*", "2d8+2", 10, "1d4"));
+        rituais.add(new Ritual("Ritual Vodum", "ritual utilizado por antigas tribos do norte da selma amazonica.", "2d6", 13, "2d4"));
 
-        // Rituais que exigem um NEX mínimo
+        // rituais que exigem um nex minimo
         if (nex >= 50) {
-            rituais.add(new Ritual("Cinerária", "Dano contínuo e debuff.", "Dano contínuo", 15, "2d6"));
+            rituais.add(new Ritual("Cinerária", "uma onda de fumaca que surge e preenche o ambiente inteiro, como uma nuvem venenosa", "Dano contínuo", 15, "2d6"));
         }
 
         return rituais;

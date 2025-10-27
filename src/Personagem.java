@@ -1,45 +1,60 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Representa um personagem simplificado do RPG, com nome, classe, arma e rituais.
- */
+// representa um personagem simplificado do rpg, com nome, classe, e inventario.
 public class Personagem {
 
     private final String nome;
-    private int nex; // Removido final para permitir progressão
+    private int nex; // removido final para permitir progressao
     private final Classe classe;
     private final Atributos atributos;
-    private Arma arma; // Removido final para permitir trocas
-    private List<Ritual> rituais; // Alterado para uma lista de rituais
+    private final Inventario inventario;
+    private Arma armaEquipada; // para rastrear a arma atualmente equipada
 
-    // Status de combate
+    // status de combate
     private int pontosDeVidaAtuais;
-    private int pontosDeVidaMaximos; // Removido final para permitir atualização
+    private int pontosDeVidaMaximos; // removido final para permitir atualizacao
     private boolean armaTravada = false;
 
-    // Efeitos de status (ex: Cinerária)
+    // efeitos de status (ex: cineraria)
     private int cinerariaDanoTurnos = 0;
     private int cinerariaDebuffTurnos = 0;
 
-    public Personagem(String nome, int nex, Classe classe, Atributos atributos, Arma arma, List<Ritual> rituais) {
+    public Personagem(String nome, int nex, Classe classe, Atributos atributos, Arma armaInicial, List<Ritual> rituaisIniciais) {
         this.nome = nome;
         this.nex = nex;
         this.classe = classe;
         this.atributos = atributos;
-        this.arma = arma;
-        this.rituais = rituais != null ? new ArrayList<>(rituais) : new ArrayList<>();
+        this.inventario = new Inventario();
+        if (armaInicial != null) {
+            this.inventario.adicionarItem(armaInicial);
+            this.armaEquipada = armaInicial;
+        }
+        if (rituaisIniciais != null) {
+            for (Ritual r : rituaisIniciais) {
+                this.inventario.adicionarItem(r);
+            }
+        }
 
         recalcularStatus();
         this.pontosDeVidaAtuais = this.pontosDeVidaMaximos;
     }
 
-    // --- Métodos de Progressão ---
+    // --- metodos de progressao ---
 
-    public void aumentarNex(int aumento) {
-        this.nex += aumento;
-        System.out.println("\n" + this.nome + " transcendeu! Novo NEX: " + this.nex + "%");
-        recalcularStatus();
+    public void setNex(int novoNex) {
+        if (novoNex > this.nex) {
+            int vidaAntes = this.pontosDeVidaAtuais;
+            this.nex = novoNex;
+            recalcularStatus();
+            int vidaGanha = this.pontosDeVidaMaximos - vidaAntes;
+            receberCura(vidaGanha);
+
+            System.out.println("\n" + this.nome + " transcendeu! novo nex: " + this.nex + "%");
+            if (vidaGanha > 0) {
+                System.out.println("voce se sente mais forte e recuperou " + vidaGanha + " pv!");
+            }
+        }
     }
 
     public void recalcularStatus() {
@@ -56,30 +71,22 @@ public class Personagem {
             bonusCombatente = 15;
         }
 
-        int vidaAntiga = this.pontosDeVidaMaximos;
         this.pontosDeVidaMaximos = vidaBase + bonusVigor + bonusCombatente;
-
-        // Cura o personagem pelo aumento de vida, se houver
-        if (this.pontosDeVidaMaximos > vidaAntiga) {
-            int cura = this.pontosDeVidaMaximos - vidaAntiga;
-            receberCura(cura);
-            System.out.println(this.nome + " sentiu-se mais forte e recuperou " + cura + " PV!");
-        }
     }
 
     public void adicionarRitual(Ritual novoRitual) {
         if (this.classe instanceof Ocultista) {
-            this.rituais.add(novoRitual);
+            this.inventario.adicionarItem(novoRitual);
             System.out.println(this.nome + " aprendeu o ritual: " + novoRitual.getNome());
         }
     }
 
-    public void setArma(Arma novaArma) {
-        this.arma = novaArma;
+    public void equiparArma(Arma novaArma) {
+        this.armaEquipada = novaArma;
         System.out.println(this.nome + " agora empunha: " + novaArma.getNome());
     }
 
-    // --- Métodos de Combate ---
+    // --- metodos de combate ---
 
     public void receberDano(int dano) {
         this.pontosDeVidaAtuais -= dano;
@@ -99,12 +106,12 @@ public class Personagem {
         return this.pontosDeVidaAtuais > 0;
     }
 
-    // --- Métodos para Efeitos de Status ---
+    // --- metodos para efeitos de status ---
 
     public void aplicarCineraria() {
         this.cinerariaDanoTurnos = 5;
         this.cinerariaDebuffTurnos = 6;
-        System.out.println(this.nome + " começa a ser consumido por cinzas!");
+        System.out.println(this.nome + " comeca a ser consumido por cinzas!");
     }
 
     public void processarEfeitosDeStatus() {
@@ -124,7 +131,7 @@ public class Personagem {
         return cinerariaDebuffTurnos > 0;
     }
 
-    // --- Métodos para Arma Travada ---
+    // --- metodos para arma travada ---
 
     public boolean isArmaTravada() {
         return armaTravada;
@@ -138,40 +145,62 @@ public class Personagem {
         this.armaTravada = false;
     }
 
-    // --- Getters ---
+    // --- getters ---
 
     public String getNome() { return nome; }
     public int getPontosDeVidaAtuais() { return pontosDeVidaAtuais; }
     public int getPontosDeVidaMaximos() { return pontosDeVidaMaximos; }
     public Classe getClasse() { return classe; }
     public Atributos getAtributos() { return atributos; }
-    public Arma getArma() { return arma; }
-    public List<Ritual> getRituais() { return rituais; }
+    public Inventario getInventario() { return inventario; }
     public int getNex() { return nex; }
 
-    /**
-     * Exibe a ficha simplificada do personagem.
-     */
-    public void exibirFicha() {
-        System.out.println("\n--- Ficha do Personagem ---");
-        System.out.println("Nome: " + nome);
-        System.out.println("NEX: " + nex + "%");
-        System.out.println("Classe: " + classe.getNome());
+    public Arma getArmaEquipada() {
+        return armaEquipada;
+    }
 
-        System.out.println("\n--- Atributos ---");
+    public List<Arma> getArmasNoInventario() {
+        List<Arma> armas = new ArrayList<>();
+        for (Item item : inventario.getItens()) {
+            if (item instanceof Arma) {
+                armas.add((Arma) item);
+            }
+        }
+        return armas;
+    }
+
+    public List<Ritual> getRituais() {
+        List<Ritual> rituais = new ArrayList<>();
+        for (Item item : inventario.getItens()) {
+            if (item instanceof Ritual) {
+                rituais.add((Ritual) item);
+            }
+        }
+        return rituais;
+    }
+
+    // exibe a ficha simplificada do personagem.
+    public void exibirFicha() {
+        System.out.println("\n--- ficha do personagem ---");
+        System.out.println("nome: " + nome);
+        System.out.println("nex: " + nex + "%");
+        System.out.println("classe: " + classe.getNome());
+
+        System.out.println("\n--- atributos ---");
         System.out.println(atributos);
 
-        System.out.println("\n--- Status ---");
-        System.out.println("PV: " + pontosDeVidaAtuais + " / " + pontosDeVidaMaximos);
+        System.out.println("\n--- status ---");
+        System.out.println("pv: " + pontosDeVidaAtuais + " / " + pontosDeVidaMaximos);
 
-        System.out.println("\n--- Equipamentos e Rituais ---");
-        if (arma != null) {
-            System.out.println("Arma: " + arma);
+        System.out.println("\n--- equipamentos e rituais ---");
+        if (armaEquipada != null) {
+            System.out.println("arma equipada: " + armaEquipada);
         } else {
-            System.out.println("Arma: Desarmado");
+            System.out.println("arma: desarmado");
         }
+        List<Ritual> rituais = getRituais();
         if (rituais != null && !rituais.isEmpty()) {
-            System.out.println("Rituais Conhecidos:");
+            System.out.println("rituais conhecidos:");
             for (Ritual r : rituais) {
                 System.out.println("- " + r.getNome());
             }

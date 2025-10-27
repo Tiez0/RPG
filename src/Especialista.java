@@ -1,7 +1,5 @@
-/**
- * Representa a classe Especialista.
- * Focado em versatilidade, com um equilíbrio entre combate e suporte.
- */
+// representa a classe especialista.
+// focado em versatilidade, com um equilibrio entre combate e suporte.
 public class Especialista extends Classe {
 
     @Override

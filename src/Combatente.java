@@ -1,7 +1,5 @@
-/**
- * Representa a classe Combatente.
- * Focado em combate, com mais pontos de vida.
- */
+// representa a classe combatente.
+// focado em combate, com mais pontos de vida.
 public class Combatente extends Classe {
 
     @Override

@@ -1,51 +1,43 @@
-/**
- * Representa uma arma no RPG, com regras de dano, acerto e crítico.
- */
-public class Arma {
-    private String nome; // Removido final para permitir a transformação "do Outro Lado"
+// representa uma arma no rpg, com regras de dano, acerto e critico.
+public class Arma extends Item {
     private final String dano;
     private final String danoCritico;
     private final int acertoMinimo;
-    private int criticoMinimo; // Removido final para a habilidade do Especialista
+    private int criticoMinimo; // removido final para a habilidade do especialista
 
-    /**
-     * Construtor para criar uma nova arma com regras de combate.
-     *
-     * @param nome          O nome da arma (ex: Machado).
-     * @param dano          O dano padrão da arma (ex: 1d8).
-     * @param danoCritico   O dano em um acerto crítico (ex: 3d8 ou 19).
-     * @param acertoMinimo  O valor mínimo no d20 para acertar.
-     * @param criticoMinimo O valor mínimo no d20 para um acerto crítico.
-     */
-    public Arma(String nome, String dano, String danoCritico, int acertoMinimo, int criticoMinimo) {
-        this.nome = nome;
+    // construtor para criar uma nova arma com regras de combate.
+    public Arma(String nome, String descricao, String dano, String danoCritico, int acertoMinimo, int criticoMinimo) {
+        super(nome, descricao, 1); // armas sao unicas, entao a quantidade e sempre 1
         this.dano = dano;
         this.danoCritico = danoCritico;
         this.acertoMinimo = acertoMinimo;
         this.criticoMinimo = criticoMinimo;
     }
 
-    // --- Métodos de Modificação ---
+    // --- metodos de modificacao ---
 
     public void transformarDoOutroLado() {
-        this.nome += " do Outro Lado";
-        System.out.println("Sua arma brilha com uma energia roxa e se transforma!");
+        super.setNome(super.getNome() + " do Outro Lado");
+        System.out.println("sua arma brilha com uma energia roxa e se transforma!");
     }
 
     public void reduzirCritico(int reducao) {
         this.criticoMinimo -= reducao;
-        System.out.println("Sua perícia com a arma aumentou! (Crítico: " + this.criticoMinimo + "+)");
+        System.out.println("sua pericia com a arma aumentou! (critico: " + this.criticoMinimo + "+)");
     }
 
-    // --- Getters ---
-    public String getNome() { return nome; }
+    // --- getters ---
     public String getDano() { return dano; }
     public String getDanoCritico() { return danoCritico; }
     public int getAcertoMinimo() { return acertoMinimo; }
     public int getCriticoMinimo() { return criticoMinimo; }
 
     @Override
-    public String toString() {
-        return nome + " (Dano: " + dano + " | Crítico: " + danoCritico + " / " + criticoMinimo + "+)";
+    public void exibirDetalhes() {
+        System.out.println("\n--- " + getNome() + " ---");
+        System.out.println("descricao: " + getDescricao());
+        System.out.println("dano: " + dano);
+        System.out.println("critico: " + danoCritico + " / " + criticoMinimo + "+");
+        System.out.println("acerto minimo: " + acertoMinimo);
     }
 }
