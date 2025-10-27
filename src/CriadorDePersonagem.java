@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -16,17 +17,117 @@ public class CriadorDePersonagem {
         Classe classe = escolherClasse(scanner);
         Atributos atributos = distribuirAtributos(scanner, nex);
 
-        Arma arma = null;
-        Ritual ritual = null;
+        Arma armaInicial = atribuirArmaInicial(classe);
+        List<Ritual> rituaisIniciais = new ArrayList<>();
 
-        if (classe instanceof Combatente || classe instanceof Especialista) {
-            arma = escolherArma(scanner, classe, nex);
+        Personagem novoPersonagem = new Personagem(nome, nex, classe, atributos, armaInicial, rituaisIniciais);
+
+        gerenciarProgressaoArma(scanner, novoPersonagem);
+        gerenciarProgressaoRitual(scanner, novoPersonagem);
+
+        return novoPersonagem;
+    }
+
+    private static Arma atribuirArmaInicial(Classe classe) {
+        if (classe instanceof Combatente) {
+            System.out.println("Você recebeu um Taco de Beisebol como arma inicial.");
+            return new Arma("Taco de Beisebol", "2d4", "2d4", 10, 20);
+        } else if (classe instanceof Especialista) {
+            System.out.println("Você recebeu uma Besta como arma inicial.");
+            return new Arma("Besta", "1d8", "12", 10, 19);
         } else if (classe instanceof Ocultista) {
-            arma = new Arma("Adaga Ritualística", "1d6", "2d6", 10, 20);
-            ritual = escolherRitual(scanner, nex);
+            System.out.println("Você recebeu uma Adaga Ritualística como arma inicial.");
+            return new Arma("Adaga Ritualística", "1d6", "2d6", 10, 20);
         }
+        return null; // Nunca deve acontecer
+    }
 
-        return new Personagem(nome, nex, classe, atributos, arma, ritual);
+    private static void gerenciarProgressaoArma(Scanner scanner, Personagem personagem) {
+        // Lógica para Combatente
+        if (personagem.getClasse() instanceof Combatente) {
+            if (personagem.getNex() >= 30) {
+                // Se a arma atual não for o Taco de Beisebol, transforma em "do Outro Lado"
+                if (!personagem.getArma().getNome().equals("Taco de Beisebol")) {
+                    personagem.getArma().transformarDoOutroLado();
+                }
+            }
+            if (personagem.getNex() >= 50) {
+                System.out.println("Você atingiu NEX 50! Recebeu a arma Ereshkigal!");
+                personagem.setArma(new Arma("Ereshkigal", "2d12", "4d12", 2, 15));
+            }
+        }
+        // Lógica para Especialista
+        else if (personagem.getClasse() instanceof Especialista) {
+            if (personagem.getNex() >= 15) {
+                personagem.getArma().reduzirCritico(1);
+            }
+            if (personagem.getNex() >= 30) {
+                personagem.getArma().reduzirCritico(1); // Mais 1 de redução
+                personagem.getArma().transformarDoOutroLado();
+            }
+            if (personagem.getNex() >= 50) {
+                System.out.println("Você atingiu NEX 50! Recebeu o Fuzil de Precisão Abutre!");
+                personagem.setArma(new Arma("Fuzil de Precisão Abutre", "2d10", "10d10", 12, 18));
+            }
+        }
+    }
+
+    private static void gerenciarProgressaoRitual(Scanner scanner, Personagem personagem) {
+        if (personagem.getClasse() instanceof Ocultista) {
+            int rituaisParaEscolher = 0;
+            if (personagem.getNex() >= 5) rituaisParaEscolher = 1;
+            if (personagem.getNex() >= 15) rituaisParaEscolher = 2;
+            if (personagem.getNex() >= 30) rituaisParaEscolher = 3;
+
+            for (int i = 0; i < rituaisParaEscolher; i++) {
+                System.out.println("\nEscolha seu ritual (Ritual " + (i + 1) + "):");
+                List<Ritual> rituaisDisponiveis = RitualData.getRitualsDisponiveis(personagem.getNex());
+                // Remover rituais já aprendidos para não escolher repetido
+                rituaisDisponiveis.removeAll(personagem.getRituais());
+
+                if (rituaisDisponiveis.isEmpty()) {
+                    System.out.println("Não há mais rituais disponíveis para aprender neste NEX.");
+                    break;
+                }
+
+                for (int j = 0; j < rituaisDisponiveis.size(); j++) {
+                    Ritual r = rituaisDisponiveis.get(j);
+                    System.out.println((j + 1) + ": " + r.getNome() + " (" + r.getDescricao() + ")");
+                }
+
+                while (true) {
+                    try {
+                        System.out.print("Digite o número do ritual: ");
+                        int escolha = scanner.nextInt();
+                        if (escolha > 0 && escolha <= rituaisDisponiveis.size()) {
+                            personagem.adicionarRitual(rituaisDisponiveis.get(escolha - 1));
+                            break;
+                        } else {
+                            System.out.println("Opção inválida.");
+                        }
+                    } catch (InputMismatchException e) {
+                        System.out.println("Entrada inválida. Por favor, digite um número.");
+                        scanner.next();
+                    }
+                }
+            }
+
+            // Cinerária automática no NEX 50
+            if (personagem.getNex() >= 50) {
+                boolean jaTemCineraria = false;
+                for (Ritual r : personagem.getRituais()) {
+                    if (r.getNome().equals("Cinerária")) {
+                        jaTemCineraria = true;
+                        break;
+                    }
+                }
+                if (!jaTemCineraria) {
+                    Ritual cineraria = new Ritual("Cinerária", "Dano contínuo e debuff.", "Dano contínuo", 15, "2d6");
+                    personagem.adicionarRitual(cineraria);
+                    System.out.println("Você atingiu NEX 50! Aprendeu o ritual Cinerária automaticamente!");
+                }
+            }
+        }
     }
 
     private static Atributos distribuirAtributos(Scanner scanner, int nex) {
@@ -85,55 +186,6 @@ public class CriadorDePersonagem {
         return new Atributos(agi, forca, inte, pres, vig);
     }
 
-    private static Arma escolherArma(Scanner scanner, Classe classe, int nex) {
-        if (classe instanceof Combatente) {
-            System.out.println("\nComo um Combatente, escolha sua arma inicial:");
-            System.out.println("1: Machado (Acerto: 12+, Crítico: 20)");
-            System.out.println("2: Katana (Acerto: 10+, Crítico: 19+)");
-            if (nex >= 50) System.out.println("3: Ereshkigal (Acerto: 2+, Crítico: 15+)");
-
-            while (true) {
-                try {
-                    System.out.print("Digite o número da arma: ");
-                    int escolha = scanner.nextInt();
-                    switch (escolha) {
-                        case 1: return new Arma("Machado", "1d8", "3d8", 12, 20);
-                        case 2: return new Arma("Katana", "1d10", "19", 10, 19);
-                        case 3: if (nex >= 50) return new Arma("Ereshkigal", "2d12", "4d12", 2, 15);
-                        default: System.out.println("Opção inválida.");
-                    }
-                } catch (InputMismatchException e) {
-                    System.out.println("Entrada inválida.");
-                    scanner.next();
-                }
-            }
-        } else if (classe instanceof Especialista) {
-            System.out.println("\nComo um Especialista, escolha sua arma inicial:");
-            System.out.println("1: Besta (Acerto: 11+, Crítico: 20)");
-            System.out.println("2: Revólver (Acerto: 10+, Crítico: 19+)");
-            System.out.println("3: Fuzil de Caça (Acerto: 12+, Crítico: 19+)");
-            if (nex >= 50) System.out.println("4: Fuzil de Precisão Abutre (Acerto: 12+, Crítico: 18+)");
-
-            while (true) {
-                try {
-                    System.out.print("Digite o número da arma: ");
-                    int escolha = scanner.nextInt();
-                    switch (escolha) {
-                        case 1: return new Arma("Besta", "1d8", "19", 11, 20);
-                        case 2: return new Arma("Revólver", "2d6", "6d6", 10, 19);
-                        case 3: return new Arma("Fuzil de Caça", "2d8", "4d8", 12, 19);
-                        case 4: if (nex >= 50) return new Arma("Fuzil de Precisão Abutre", "2d10", "10d10", 12, 18);
-                        default: System.out.println("Opção inválida.");
-                    }
-                } catch (InputMismatchException e) {
-                    System.out.println("Entrada inválida.");
-                    scanner.next();
-                }
-            }
-        }
-        return null;
-    }
-
     private static Classe escolherClasse(Scanner scanner) {
         System.out.println("\nEscolha a classe do seu personagem:");
         System.out.println("1: Combatente");
@@ -151,31 +203,6 @@ public class CriadorDePersonagem {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Entrada inválida.");
-                scanner.next();
-            }
-        }
-    }
-
-    private static Ritual escolherRitual(Scanner scanner, int nex) {
-        System.out.println("\nComo um Ocultista, você recebe uma Adaga Ritualística (1d6) e escolhe seu ritual principal:");
-        List<Ritual> rituaisDisponiveis = RitualData.getRitualsDisponiveis(nex);
-
-        for (int i = 0; i < rituaisDisponiveis.size(); i++) {
-            Ritual r = rituaisDisponiveis.get(i);
-            System.out.println((i + 1) + ": " + r.getNome() + " (" + r.getDescricao() + ")");
-        }
-
-        while (true) {
-            try {
-                System.out.print("Digite o número do ritual: ");
-                int escolha = scanner.nextInt();
-                if (escolha > 0 && escolha <= rituaisDisponiveis.size()) {
-                    return rituaisDisponiveis.get(escolha - 1);
-                } else {
-                    System.out.println("Opção inválida.");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida. Por favor, digite um número.");
                 scanner.next();
             }
         }

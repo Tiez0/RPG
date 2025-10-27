@@ -11,7 +11,9 @@ public class Main {
 
         if (modoDeJogo.equals("historia")) {
             ModoHistoria.iniciar(scanner);
-        } else {
+        } else if (modoDeJogo.equals("sandbox")) {
+            Sandbox.iniciar(scanner);
+        } else { // PvP ou PvM
             String modoDeRolagem = menu.escolherModoDeRolagem();
             GerenciadorDeCombate gerenciadorDeCombate = new GerenciadorDeCombate(scanner, modoDeRolagem);
 

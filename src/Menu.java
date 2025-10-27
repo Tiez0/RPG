@@ -14,6 +14,7 @@ public class Menu {
         System.out.println("1: PvP (Jogador vs Jogador)");
         System.out.println("2: PvM (Jogador vs Máquina)");
         System.out.println("3: Modo História");
+        System.out.println("4: Modo Sandbox");
 
         while (true) {
             try {
@@ -22,7 +23,8 @@ public class Menu {
                 if (escolha == 1) return "pvp";
                 if (escolha == 2) return "pvm";
                 if (escolha == 3) return "historia";
-                System.out.println("Opção inválida. Por favor, escolha 1, 2 ou 3.");
+                if (escolha == 4) return "sandbox";
+                System.out.println("Opção inválida. Por favor, escolha 1, 2, 3 ou 4.");
             } catch (InputMismatchException e) {
                 System.out.println("Entrada inválida. Por favor, digite um número.");
                 scanner.next();

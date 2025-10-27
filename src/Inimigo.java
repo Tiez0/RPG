@@ -7,6 +7,10 @@ public class Inimigo {
     private final int pontosDeVidaMaximos;
     private final String dano;
 
+    // Efeitos de status (ex: Cinerária)
+    private int cinerariaDanoTurnos = 0;
+    private int cinerariaDebuffTurnos = 0;
+
     /**
      * Construtor para criar um novo inimigo.
      *
@@ -31,6 +35,33 @@ public class Inimigo {
     public boolean estaVivo() {
         return this.pontosDeVidaAtuais > 0;
     }
+
+    // --- Métodos para Efeitos de Status ---
+
+    public void aplicarCineraria() {
+        this.cinerariaDanoTurnos = 5; // 1d6 de dano por 5 rodadas
+        this.cinerariaDebuffTurnos = 6; // Metade do dano por 6 rodadas
+        System.out.println(this.nome + " começa a ser consumido por cinzas!");
+    }
+
+    public void processarEfeitosDeStatus() {
+        if (this.cinerariaDanoTurnos > 0) {
+            this.cinerariaDanoTurnos--;
+        }
+        if (this.cinerariaDebuffTurnos > 0) {
+            this.cinerariaDebuffTurnos--;
+        }
+    }
+
+    public int getCinerariaDanoTurnos() {
+        return cinerariaDanoTurnos;
+    }
+
+    public boolean estaDebuffado() {
+        return cinerariaDebuffTurnos > 0;
+    }
+
+    // --- Getters ---
 
     public String getNome() {
         return nome;

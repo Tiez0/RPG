@@ -1,28 +1,48 @@
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Representa um personagem simplificado do RPG, com nome, classe, arma e ritual.
+ * Representa um personagem simplificado do RPG, com nome, classe, arma e rituais.
  */
 public class Personagem {
 
     private final String nome;
-    private final int nex;
+    private int nex; // Removido final para permitir progressão
     private final Classe classe;
     private final Atributos atributos;
-    private final Arma arma;
-    private final Ritual ritual;
+    private Arma arma; // Removido final para permitir trocas
+    private List<Ritual> rituais; // Alterado para uma lista de rituais
 
     // Status de combate
     private int pontosDeVidaAtuais;
-    private final int pontosDeVidaMaximos;
+    private int pontosDeVidaMaximos; // Removido final para permitir atualização
     private boolean armaTravada = false;
 
-    public Personagem(String nome, int nex, Classe classe, Atributos atributos, Arma arma, Ritual ritual) {
+    // Efeitos de status (ex: Cinerária)
+    private int cinerariaDanoTurnos = 0;
+    private int cinerariaDebuffTurnos = 0;
+
+    public Personagem(String nome, int nex, Classe classe, Atributos atributos, Arma arma, List<Ritual> rituais) {
         this.nome = nome;
         this.nex = nex;
         this.classe = classe;
         this.atributos = atributos;
         this.arma = arma;
-        this.ritual = ritual;
+        this.rituais = rituais != null ? new ArrayList<>(rituais) : new ArrayList<>();
 
+        recalcularStatus();
+        this.pontosDeVidaAtuais = this.pontosDeVidaMaximos;
+    }
+
+    // --- Métodos de Progressão ---
+
+    public void aumentarNex(int aumento) {
+        this.nex += aumento;
+        System.out.println("\n" + this.nome + " transcendeu! Novo NEX: " + this.nex + "%");
+        recalcularStatus();
+    }
+
+    public void recalcularStatus() {
         int vidaBase = classe.getPVIniciais();
         int bonusVigor;
         if (classe instanceof Combatente) {
@@ -30,8 +50,33 @@ public class Personagem {
         } else {
             bonusVigor = atributos.getVigor() * 7;
         }
-        this.pontosDeVidaMaximos = vidaBase + bonusVigor;
-        this.pontosDeVidaAtuais = this.pontosDeVidaMaximos;
+
+        int bonusCombatente = 0;
+        if (classe instanceof Combatente && nex >= 30) {
+            bonusCombatente = 15;
+        }
+
+        int vidaAntiga = this.pontosDeVidaMaximos;
+        this.pontosDeVidaMaximos = vidaBase + bonusVigor + bonusCombatente;
+
+        // Cura o personagem pelo aumento de vida, se houver
+        if (this.pontosDeVidaMaximos > vidaAntiga) {
+            int cura = this.pontosDeVidaMaximos - vidaAntiga;
+            receberCura(cura);
+            System.out.println(this.nome + " sentiu-se mais forte e recuperou " + cura + " PV!");
+        }
+    }
+
+    public void adicionarRitual(Ritual novoRitual) {
+        if (this.classe instanceof Ocultista) {
+            this.rituais.add(novoRitual);
+            System.out.println(this.nome + " aprendeu o ritual: " + novoRitual.getNome());
+        }
+    }
+
+    public void setArma(Arma novaArma) {
+        this.arma = novaArma;
+        System.out.println(this.nome + " agora empunha: " + novaArma.getNome());
     }
 
     // --- Métodos de Combate ---
@@ -52,6 +97,31 @@ public class Personagem {
 
     public boolean estaVivo() {
         return this.pontosDeVidaAtuais > 0;
+    }
+
+    // --- Métodos para Efeitos de Status ---
+
+    public void aplicarCineraria() {
+        this.cinerariaDanoTurnos = 5;
+        this.cinerariaDebuffTurnos = 6;
+        System.out.println(this.nome + " começa a ser consumido por cinzas!");
+    }
+
+    public void processarEfeitosDeStatus() {
+        if (this.cinerariaDanoTurnos > 0) {
+            this.cinerariaDanoTurnos--;
+        }
+        if (this.cinerariaDebuffTurnos > 0) {
+            this.cinerariaDebuffTurnos--;
+        }
+    }
+
+    public int getCinerariaDanoTurnos() {
+        return cinerariaDanoTurnos;
+    }
+
+    public boolean estaDebuffado() {
+        return cinerariaDebuffTurnos > 0;
     }
 
     // --- Métodos para Arma Travada ---
@@ -76,7 +146,7 @@ public class Personagem {
     public Classe getClasse() { return classe; }
     public Atributos getAtributos() { return atributos; }
     public Arma getArma() { return arma; }
-    public Ritual getRitual() { return ritual; }
+    public List<Ritual> getRituais() { return rituais; }
     public int getNex() { return nex; }
 
     /**
@@ -100,8 +170,11 @@ public class Personagem {
         } else {
             System.out.println("Arma: Desarmado");
         }
-        if (ritual != null) {
-            System.out.println("Ritual Principal: " + ritual);
+        if (rituais != null && !rituais.isEmpty()) {
+            System.out.println("Rituais Conhecidos:");
+            for (Ritual r : rituais) {
+                System.out.println("- " + r.getNome());
+            }
         }
         System.out.println("---------------------------");
     }

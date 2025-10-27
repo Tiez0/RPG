@@ -2,6 +2,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.List;
 
 public class GerenciadorDeCombate {
 
@@ -69,8 +70,23 @@ public class GerenciadorDeCombate {
 
     private void realizarTurnoInimigo(Inimigo inimigo, Personagem jogador) {
         System.out.println("\nÉ o turno de " + inimigo.getNome() + ".");
+        inimigo.processarEfeitosDeStatus();
+
+        if (inimigo.getCinerariaDanoTurnos() > 0) {
+            int danoCineraria = rolarDadoCentralizado("1d6");
+            System.out.println("As cinzas queimam " + inimigo.getNome() + " por " + danoCineraria + " de dano.");
+            inimigo.receberDano(danoCineraria);
+            if (!inimigo.estaVivo()) return;
+        }
+
         System.out.println(inimigo.getNome() + " ataca!");
         int dano = rolarDadoCentralizado(inimigo.getDano());
+
+        if (inimigo.estaDebuffado()) {
+            System.out.println(inimigo.getNome() + " está enfraquecido e causa metade do dano!");
+            dano /= 2;
+        }
+
         System.out.println(inimigo.getNome() + " causou " + dano + " de dano em " + jogador.getNome() + ".");
         jogador.receberDano(dano);
     }
@@ -78,12 +94,25 @@ public class GerenciadorDeCombate {
     private void realizarTurnoJogador(Personagem atacante, Object alvo) {
         System.out.println("\nÉ o turno de " + atacante.getNome() + ".");
         atacante.destravarArma();
+        atacante.processarEfeitosDeStatus();
+
+        if (atacante.getCinerariaDanoTurnos() > 0) {
+            int danoCineraria = rolarDadoCentralizado("1d6");
+            System.out.println("As cinzas queimam " + atacante.getNome() + " por " + danoCineraria + " de dano.");
+            atacante.receberDano(danoCineraria);
+            if (!atacante.estaVivo()) return;
+        }
 
         while (true) {
             System.out.println("1: Mochila");
             System.out.println("2: Atacar");
+            if (atacante.getClasse() instanceof Ocultista && !atacante.getRituais().isEmpty()) {
+                System.out.println("3: Usar Ritual");
+            }
             int acao = 0;
-            while (acao != 1 && acao != 2) {
+            int maxOpcao = (atacante.getClasse() instanceof Ocultista && !atacante.getRituais().isEmpty()) ? 3 : 2;
+
+            while (acao < 1 || acao > maxOpcao) {
                 try {
                     System.out.print("Escolha sua ação: ");
                     acao = scanner.nextInt();
@@ -96,36 +125,45 @@ public class GerenciadorDeCombate {
             if (acao == 1) {
                 System.out.println("\n--- Mochila de " + atacante.getNome() + " ---");
                 if (atacante.getArma() != null) System.out.println("- Arma: " + atacante.getArma());
-                if (atacante.getRitual() != null) System.out.println("- Ritual: " + atacante.getRitual());
+                if (atacante.getRituais() != null && !atacante.getRituais().isEmpty()) {
+                    System.out.println("Rituais:");
+                    for (Ritual r : atacante.getRituais()) {
+                        System.out.println("  - " + r.getNome());
+                    }
+                }
                 System.out.println("------------------------");
-            } else { // Ação de atacar
+            } else if (acao == 2) { // Ação de atacar
                 if (atacante.isArmaTravada()) {
                     System.out.println("Sua arma está travada! Você perde o turno tentando consertá-la.");
                     return;
                 }
-
-                if (atacante.getClasse() instanceof Ocultista) {
-                    System.out.println("1: Atacar com Adaga Ritualística");
-                    System.out.println("2: Usar Ritual Principal");
-                    int tipoAtaque = 0;
-                    while (tipoAtaque != 1 && tipoAtaque != 2) {
-                        try {
-                            System.out.print("Escolha o tipo de ataque: ");
-                            tipoAtaque = scanner.nextInt();
-                        } catch (InputMismatchException e) {
-                            System.out.println("Entrada inválida.");
-                            scanner.next();
-                        }
-                    }
-                    if (tipoAtaque == 1) {
-                        resolverAtaqueComArma(atacante, alvo);
-                    } else {
-                        usarRitual(atacante, alvo);
-                    }
-                } else {
-                    resolverAtaqueComArma(atacante, alvo);
-                }
+                resolverAtaqueComArma(atacante, alvo);
                 break; 
+            } else if (acao == 3 && atacante.getClasse() instanceof Ocultista) {
+                // Escolher qual ritual usar
+                List<Ritual> rituaisDisponiveis = atacante.getRituais();
+                if (rituaisDisponiveis.isEmpty()) {
+                    System.out.println("Você não possui rituais para usar.");
+                    continue;
+                }
+
+                System.out.println("\n--- Escolha um Ritual ---");
+                for (int i = 0; i < rituaisDisponiveis.size(); i++) {
+                    System.out.println((i + 1) + ": " + rituaisDisponiveis.get(i).getNome() + " (" + rituaisDisponiveis.get(i).getDescricao() + ")");
+                }
+
+                int escolhaRitual = 0;
+                while (escolhaRitual < 1 || escolhaRitual > rituaisDisponiveis.size()) {
+                    try {
+                        System.out.print("Digite o número do ritual: ");
+                        escolhaRitual = scanner.nextInt();
+                    } catch (InputMismatchException e) {
+                        System.out.println("Entrada inválida. Por favor, digite um número.");
+                        scanner.next();
+                    }
+                }
+                usarRitual(atacante, alvo, rituaisDisponiveis.get(escolhaRitual - 1));
+                break;
             }
         }
     }
@@ -171,11 +209,27 @@ public class GerenciadorDeCombate {
         } else if (testeDeAtaque >= arma.getCriticoMinimo()) {
             System.out.println("ACERTO CRÍTICO! Dano massivo!");
             int dano = rolarDadoCentralizado(arma.getDanoCritico());
+            if (atacante.getClasse() instanceof Combatente && atacante.getNex() >= 15) {
+                dano += 2;
+                System.out.println("Bônus de Combatente (NEX 15+): +2 de dano!");
+            }
+            if (atacante.estaDebuffado()) {
+                System.out.println(atacante.getNome() + " está enfraquecido e causa metade do dano!");
+                dano /= 2;
+            }
             aplicarDano(alvo, dano);
             System.out.println("Dano CRÍTICO causado: " + dano);
         } else if (testeDeAtaque >= arma.getAcertoMinimo()) {
             System.out.println("Acerto! Rolando o dano...");
             int dano = rolarDadoCentralizado(arma.getDano());
+            if (atacante.getClasse() instanceof Combatente && atacante.getNex() >= 15) {
+                dano += 2;
+                System.out.println("Bônus de Combatente (NEX 15+): +2 de dano!");
+            }
+            if (atacante.estaDebuffado()) {
+                System.out.println(atacante.getNome() + " está enfraquecido e causa metade do dano!");
+                dano /= 2;
+            }
             aplicarDano(alvo, dano);
             System.out.println("Dano causado: " + dano);
         } else {
@@ -216,8 +270,7 @@ public class GerenciadorDeCombate {
         }
     }
 
-    private void usarRitual(Personagem atacante, Object alvo) {
-        Ritual ritual = atacante.getRitual();
+    private void usarRitual(Personagem atacante, Object alvo, Ritual ritual) {
         System.out.println(atacante.getNome() + " conjura o ritual: " + ritual.getNome() + "!");
 
         int presenca = atacante.getAtributos().getPresenca();
@@ -243,6 +296,11 @@ public class GerenciadorDeCombate {
 
                 if (expressao != null) {
                     int valor = rolarDadoCentralizado(expressao);
+                    if (atacante.estaDebuffado() && !ritual.getNome().contains("Cicatrização")) {
+                        System.out.println(atacante.getNome() + " está enfraquecido e causa metade do dano!");
+                        valor /= 2;
+                    }
+
                     if (ritual.getNome().contains("Cicatrização")) {
                         atacante.receberCura(valor);
                         System.out.println(atacante.getNome() + " curou " + valor + " pontos de vida!");
@@ -251,7 +309,15 @@ public class GerenciadorDeCombate {
                         System.out.println("Dano do ritual: " + valor);
                     }
                 } else if (efeitoEspecial != null) {
-                    System.out.println("Efeito especial do ritual: " + efeitoEspecial);
+                    if (ritual.getNome().equals("Cinerária")) {
+                        if (alvo instanceof Personagem) {
+                            ((Personagem) alvo).aplicarCineraria();
+                        } else if (alvo instanceof Inimigo) {
+                            ((Inimigo) alvo).aplicarCineraria();
+                        }
+                    } else {
+                        System.out.println("Efeito especial do ritual: " + efeitoEspecial);
+                    }
                 }
             } else {
                 System.out.println("O ritual " + ritual.getNome() + " não tem um efeito de combate direto simulável, mas foi conjurado com sucesso.");
