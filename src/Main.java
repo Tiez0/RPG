@@ -7,14 +7,18 @@ public class Main {
         System.out.println("--- bem-vindo ao ordem paranormal rpg (versao simplificada) ---");
 
         Menu menu = new Menu(scanner);
+
+        // primeiro, escolhe o modo de rolagem
+        String modoDeRolagem = menu.escolherModoDeRolagem();
+
+        // depois, escolhe o modo de jogo
         String modoDeJogo = menu.escolherModoDeJogo();
 
         if (modoDeJogo.equals("historia")) {
-            ModoHistoria.iniciar(scanner);
+            ModoHistoria.iniciar(scanner, modoDeRolagem);
         } else if (modoDeJogo.equals("sandbox")) {
             Sandbox.iniciar(scanner);
         } else { // pvp ou pvm
-            String modoDeRolagem = menu.escolherModoDeRolagem();
             GerenciadorDeCombate gerenciadorDeCombate = new GerenciadorDeCombate(scanner, modoDeRolagem);
 
             if (modoDeJogo.equals("pvp")) {

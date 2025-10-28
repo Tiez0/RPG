@@ -106,17 +106,18 @@ public class GerenciadorDeCombate {
         while (true) {
             System.out.println("1: mochila");
             System.out.println("2: atacar");
-            boolean isOcultista = atacante.getClasse() instanceof Ocultista && !atacante.getRituais().isEmpty();
-            boolean isSandbox = (alvo instanceof Inimigo && ((Inimigo) alvo).getNome().equals("MALIGNO"));
-
             int maxOpcao = 2;
+
+            boolean isOcultista = atacante.getClasse() instanceof Ocultista && !atacante.getRituais().isEmpty();
             if (isOcultista) {
-                System.out.println("3: usar ritual");
-                maxOpcao = 3;
-            }
-            if (isSandbox) {
-                System.out.println((maxOpcao + 1) + ": transcender (evoluir nex)");
                 maxOpcao++;
+                System.out.println(maxOpcao + ": usar ritual");
+            }
+
+            boolean podeTranscender = atacante.podeTranscender();
+            if (podeTranscender) {
+                maxOpcao++;
+                System.out.println(maxOpcao + ": transcender (evoluir nex)");
             }
 
             int acao = 0;
@@ -132,20 +133,17 @@ public class GerenciadorDeCombate {
 
             if (acao == 1) {
                 System.out.println("\n--- mochila de " + atacante.getNome() + " ---");
-                // o inventario agora e um objeto, entao chamamos o metodo exibir dele
                 atacante.getInventario().exibir(scanner);
             } else if (acao == 2) { // acao de atacar
                 if (atacante.isArmaTravada()) {
                     System.out.println("sua arma esta travada! voce perde o turno tentando conserta-la.");
                     return;
                 }
-
                 List<Arma> armasDisponiveis = atacante.getArmasNoInventario();
                 if (armasDisponiveis.isEmpty()) {
                     System.out.println("voce nao possui armas para atacar!");
-                    continue; // permite escolher outra acao
+                    continue;
                 }
-
                 Arma armaParaUsar = null;
                 if (armasDisponiveis.size() == 1) {
                     armaParaUsar = armasDisponiveis.get(0);
@@ -168,20 +166,17 @@ public class GerenciadorDeCombate {
                     armaParaUsar = armasDisponiveis.get(escolhaArma - 1);
                 }
                 resolverAtaqueComArma(atacante, alvo, armaParaUsar);
-                break; 
+                break;
             } else if (isOcultista && acao == 3) {
-                // escolher qual ritual usar
                 List<Ritual> rituaisDisponiveis = atacante.getRituais();
                 if (rituaisDisponiveis.isEmpty()) {
                     System.out.println("voce nao possui rituais para usar.");
                     continue;
                 }
-
                 System.out.println("\n--- escolha um ritual ---");
                 for (int i = 0; i < rituaisDisponiveis.size(); i++) {
                     System.out.println((i + 1) + ": " + rituaisDisponiveis.get(i).getNome() + " (" + rituaisDisponiveis.get(i).getDescricao() + ")");
                 }
-
                 int escolhaRitual = 0;
                 while (escolhaRitual < 1 || escolhaRitual > rituaisDisponiveis.size()) {
                     try {
@@ -194,9 +189,9 @@ public class GerenciadorDeCombate {
                 }
                 usarRitual(atacante, alvo, rituaisDisponiveis.get(escolhaRitual - 1));
                 break;
-            } else if (isSandbox && acao == maxOpcao) { // acao de transcender
+            } else if (podeTranscender && acao == maxOpcao) {
                 Transcender.evoluir(atacante, scanner);
-                // apos transcender, o turno continua ou encerra? por enquanto, encerra.
+                atacante.usarTranscender(); // desabilita a transcendencia apos o uso
                 break;
             }
         }
@@ -365,7 +360,7 @@ public class GerenciadorDeCombate {
         }
     }
 
-    private int rolarDadoCentralizado(String expressao) {
+    public int rolarDadoCentralizado(String expressao) {
         if (modoDeRolagem.equals("classico")) {
             while (true) {
                 try {

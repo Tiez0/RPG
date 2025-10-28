@@ -13,7 +13,7 @@ public class CriadorDePersonagem {
         System.out.print("\ndigite o nome do " + tituloJogador + ": ");
         String nome = scanner.nextLine();
 
-        int nex = escolherNEX(scanner);
+        int nex = escolherNEX(scanner, modoDeRolagem);
         Classe classe = escolherClasse(scanner);
         Atributos atributos = distribuirAtributos(scanner, nex);
 
@@ -29,6 +29,31 @@ public class CriadorDePersonagem {
         escolherArmaAdicional(scanner, novoPersonagem);
 
         // aplica a progressao inicial baseada no nex
+        GerenciadorDeProgressao.aplicarProgressao(scanner, novoPersonagem);
+
+        return novoPersonagem;
+    }
+
+    public static Personagem criarSuperSoldado(Scanner scanner, String modoDeRolagem) {
+        scanner.nextLine(); // consome a quebra de linha pendente do menu
+        System.out.print("\ndigite o nome do super soldado: ");
+        String nome = scanner.nextLine();
+
+        int nex = 5; // nex fixo para o modo historia
+        System.out.println("\nnex definido em " + nex + "% (nivel de exposicao paranormal inicial).");
+
+        Classe classe = escolherClasse(scanner);
+        System.out.println("--- cientista 2: especializacao de combate definida. agora, vamos calibrar os atributos fisicos e mentais. ---");
+        Atributos atributos = distribuirAtributos(scanner, nex);
+
+        Personagem novoPersonagem = new Personagem(nome, nex, classe, atributos, null, new ArrayList<>());
+
+        Arma armaPadrao = atribuirArmaInicial(classe);
+        novoPersonagem.getInventario().adicionarItem(armaPadrao);
+        novoPersonagem.equiparArma(armaPadrao);
+
+        escolherArmaAdicional(scanner, novoPersonagem);
+
         GerenciadorDeProgressao.aplicarProgressao(scanner, novoPersonagem);
 
         return novoPersonagem;
@@ -183,7 +208,7 @@ public class CriadorDePersonagem {
         }
     }
 
-    private static int escolherNEX(Scanner scanner) {
+    private static int escolherNEX(Scanner scanner, String modoDeRolagem) {
         System.out.println("\ndefina o nivel de exposicao paranormal (nex).");
         int[] nexOptions = {5, 15, 25, 30, 45, 50};
         

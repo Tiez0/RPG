@@ -5,18 +5,19 @@ import java.util.List;
 public class Personagem {
 
     private final String nome;
-    private int nex; // removido final para permitir progressao
+    private int nex;
     private final Classe classe;
     private final Atributos atributos;
     private final Inventario inventario;
-    private Arma armaEquipada; // para rastrear a arma atualmente equipada
+    private Arma armaEquipada;
 
     // status de combate
     private int pontosDeVidaAtuais;
-    private int pontosDeVidaMaximos; // removido final para permitir atualizacao
+    private int pontosDeVidaMaximos;
     private boolean armaTravada = false;
+    private boolean podeTranscender = false; // novo status
 
-    // efeitos de status (ex: cineraria)
+    // efeitos de status
     private int cinerariaDanoTurnos = 0;
     private int cinerariaDebuffTurnos = 0;
 
@@ -35,7 +36,6 @@ public class Personagem {
                 this.inventario.adicionarItem(r);
             }
         }
-
         recalcularStatus();
         this.pontosDeVidaAtuais = this.pontosDeVidaMaximos;
     }
@@ -49,7 +49,6 @@ public class Personagem {
             recalcularStatus();
             int vidaGanha = this.pontosDeVidaMaximos - vidaAntes;
             receberCura(vidaGanha);
-
             System.out.println("\n" + this.nome + " transcendeu! novo nex: " + this.nex + "%");
             if (vidaGanha > 0) {
                 System.out.println("voce se sente mais forte e recuperou " + vidaGanha + " pv!");
@@ -59,18 +58,8 @@ public class Personagem {
 
     public void recalcularStatus() {
         int vidaBase = classe.getPVIniciais();
-        int bonusVigor;
-        if (classe instanceof Combatente) {
-            bonusVigor = atributos.getVigor() * 10;
-        } else {
-            bonusVigor = atributos.getVigor() * 7;
-        }
-
-        int bonusCombatente = 0;
-        if (classe instanceof Combatente && nex >= 30) {
-            bonusCombatente = 15;
-        }
-
+        int bonusVigor = (classe instanceof Combatente) ? atributos.getVigor() * 10 : atributos.getVigor() * 7;
+        int bonusCombatente = (classe instanceof Combatente && nex >= 30) ? 15 : 0;
         this.pontosDeVidaMaximos = vidaBase + bonusVigor + bonusCombatente;
     }
 
@@ -106,6 +95,20 @@ public class Personagem {
         return this.pontosDeVidaAtuais > 0;
     }
 
+    // --- metodos para transcender ---
+
+    public boolean podeTranscender() {
+        return podeTranscender;
+    }
+
+    public void habilitarTranscender() {
+        this.podeTranscender = true;
+    }
+
+    public void usarTranscender() {
+        this.podeTranscender = false;
+    }
+
     // --- metodos para efeitos de status ---
 
     public void aplicarCineraria() {
@@ -115,12 +118,8 @@ public class Personagem {
     }
 
     public void processarEfeitosDeStatus() {
-        if (this.cinerariaDanoTurnos > 0) {
-            this.cinerariaDanoTurnos--;
-        }
-        if (this.cinerariaDebuffTurnos > 0) {
-            this.cinerariaDebuffTurnos--;
-        }
+        if (cinerariaDanoTurnos > 0) cinerariaDanoTurnos--;
+        if (cinerariaDebuffTurnos > 0) cinerariaDebuffTurnos--;
     }
 
     public int getCinerariaDanoTurnos() {
@@ -154,10 +153,7 @@ public class Personagem {
     public Atributos getAtributos() { return atributos; }
     public Inventario getInventario() { return inventario; }
     public int getNex() { return nex; }
-
-    public Arma getArmaEquipada() {
-        return armaEquipada;
-    }
+    public Arma getArmaEquipada() { return armaEquipada; }
 
     public List<Arma> getArmasNoInventario() {
         List<Arma> armas = new ArrayList<>();
@@ -179,19 +175,15 @@ public class Personagem {
         return rituais;
     }
 
-    // exibe a ficha simplificada do personagem.
     public void exibirFicha() {
         System.out.println("\n--- ficha do personagem ---");
         System.out.println("nome: " + nome);
         System.out.println("nex: " + nex + "%");
         System.out.println("classe: " + classe.getNome());
-
         System.out.println("\n--- atributos ---");
         System.out.println(atributos);
-
         System.out.println("\n--- status ---");
         System.out.println("pv: " + pontosDeVidaAtuais + " / " + pontosDeVidaMaximos);
-
         System.out.println("\n--- equipamentos e rituais ---");
         if (armaEquipada != null) {
             System.out.println("arma equipada: " + armaEquipada);
