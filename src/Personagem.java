@@ -2,15 +2,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Representa um personagem simplificado do RPG, com nome, classe, arma e ritual.
+ * Representa um sobrevivente no mundo pós-apocalíptico do "Eco".
  */
 public class Personagem {
 
     private final String nome;
-    private final int nex;
+    private final int nex; // Internamente, ainda é NEX, mas para o jogador é NES
     private final Classe classe;
     private final Arma arma;
-    private final Ritual ritual;
+    private final Ritual ritual; // Representa uma Técnica de Sobrevivência
 
     // Status de combate
     private int pontosDeVidaAtuais;
@@ -24,7 +24,6 @@ public class Personagem {
         this.arma = arma;
         this.ritual = ritual;
 
-        // Cálculo de PV simplificado
         int niveis = nex / 5;
         this.pontosDeVidaMaximos = (classe.getPVIniciais() * niveis);
         this.pontosDeVidaAtuais = this.pontosDeVidaMaximos;
@@ -75,34 +74,34 @@ public class Personagem {
     public int getNex() { return nex; }
 
     /**
-     * Exibe a ficha simplificada do personagem.
+     * Exibe o registro do sobrevivente.
      */
     public void exibirFicha() {
-        System.out.println("\n--- Ficha do Personagem ---");
+        System.out.println("\n--- REGISTRO DO SOBREVIVENTE ---");
         System.out.println("Nome: " + nome);
-        System.out.println("NEX: " + nex + "%");
-        System.out.println("Classe: " + classe.getNome());
+        System.out.println("NES (Nível de Estresse): " + nex + "%");
+        System.out.println("Arquétipo: " + classe.getNome());
 
-        System.out.println("\n--- Status ---");
+        System.out.println("\n--- Condição ---");
         System.out.println("PV: " + pontosDeVidaAtuais + " / " + pontosDeVidaMaximos);
 
-        System.out.println("\n--- Equipamentos e Rituais ---");
+        System.out.println("\n--- Equipamento e Técnicas ---");
         if (arma != null) {
             System.out.println("Arma: " + arma);
         } else {
             System.out.println("Arma: Desarmado");
         }
         if (ritual != null) {
-            System.out.println("Ritual Principal: " + ritual);
+            System.out.println("Técnica Principal: " + ritual);
         }
 
-        System.out.println("\n--- Perícias ---");
+        System.out.println("\n--- Habilidades de Sobrevivência ---");
         List<String> pericias = new ArrayList<>(classe.getPericiasTreinadas());
-        System.out.println("Perícias Treinadas: " + pericias);
+        System.out.println("Habilidades Treinadas: " + pericias);
 
-        System.out.println("\n--- Habilidades e Poderes ---");
+        System.out.println("\n--- Aptidões e Vantagens ---");
         System.out.println("Proficiências: " + classe.getProficiencias());
-        System.out.println("Habilidades de Classe: " + classe.getHabilidades(nex));
+        System.out.println("Habilidades de Arquétipo: " + classe.getHabilidades(nex));
         System.out.println("---------------------------");
     }
 }
