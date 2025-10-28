@@ -1,5 +1,5 @@
 /**
- * Representa um inimigo (monstro) no RPG.
+ * Representa uma ameaça no mundo do "Eco", geralmente um dos "Perdidos".
  */
 public class Inimigo {
     private final String nome;
@@ -8,11 +8,11 @@ public class Inimigo {
     private final String dano;
 
     /**
-     * Construtor para criar um novo inimigo.
+     * Construtor para criar uma nova ameaça.
      *
-     * @param nome         O nome do inimigo (ex: Zumbi de Sangue).
-     * @param pontosDeVida A quantidade de vida máxima do inimigo.
-     * @param dano         O dano base do ataque do inimigo (ex: 1d6).
+     * @param nome         O nome da criatura (ex: Errante Comum).
+     * @param pontosDeVida A quantidade de vida máxima da criatura.
+     * @param dano         O dano base do ataque da criatura (ex: 1d6).
      */
     public Inimigo(String nome, int pontosDeVida, String dano) {
         this.nome = nome;
