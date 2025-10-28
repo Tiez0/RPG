@@ -1,6 +1,6 @@
 // representa um ritual que um ocultista pode usar, com regras de sucesso e falha.
-public class Ritual extends Item {
-    private final String efeito;
+public class Ritual extends Item implements Cloneable {
+    private String efeito; // Removido o 'final' para permitir a modificação
     private final int sucessoMinimo;
     private final String penalidadeFalha;
 
@@ -12,8 +12,9 @@ public class Ritual extends Item {
         this.penalidadeFalha = penalidadeFalha;
     }
 
-    // getters
+    // getters e setters
     public String getEfeito() { return efeito; }
+    public void setEfeito(String efeito) { this.efeito = efeito; } // Novo setter
     public int getSucessoMinimo() { return sucessoMinimo; }
     public String getPenalidadeFalha() { return penalidadeFalha; }
 
@@ -24,5 +25,10 @@ public class Ritual extends Item {
         System.out.println("efeito: " + efeito);
         System.out.println("sucesso: " + sucessoMinimo + "+");
         System.out.println("penalidade por falha: " + penalidadeFalha);
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

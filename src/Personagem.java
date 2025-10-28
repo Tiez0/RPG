@@ -7,7 +7,7 @@ public class Personagem {
     private final String nome;
     private int nex;
     private final Classe classe;
-    private final Atributos atributos;
+    private Atributos atributos;
     private final Inventario inventario;
     private Arma armaEquipada;
 
@@ -73,6 +73,24 @@ public class Personagem {
     public void equiparArma(Arma novaArma) {
         this.armaEquipada = novaArma;
         System.out.println(this.nome + " agora empunha: " + novaArma.getNome());
+    }
+
+    public void aumentarAtributo(String atributo, int valor) {
+        int agi = atributos.getAgilidade();
+        int forca = atributos.getForca();
+        int inte = atributos.getIntelecto();
+        int pres = atributos.getPresenca();
+        int vig = atributos.getVigor();
+
+        switch (atributo.toLowerCase()) {
+            case "agilidade": agi += valor; break;
+            case "forca": forca += valor; break;
+            case "intelecto": inte += valor; break;
+            case "presenca": pres += valor; break;
+            case "vigor": vig += valor; break;
+        }
+
+        this.atributos = new Atributos(agi, forca, inte, pres, vig);
     }
 
     // --- metodos de combate ---

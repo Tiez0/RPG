@@ -131,6 +131,41 @@ public class ModoHistoria {
         }
 
         System.out.println("\nquerendo ou nao, voce e levado para dentro da igreja. o ar e pesado e um canto baixo ecoa pelas paredes.");
+        
+        System.out.println("\nAo ser levado para dentro, um dos guardas aponta para uma porta lateral.");
+        System.out.println("--- Guarda: Antes de ver o mestre, prove seu valor. Sobreviva ao que ha la dentro.");
+        System.out.println("Voce e empurrado para uma sala escura. A porta se tranca. Um rugido ecoa e um Zumbi de Sangue Bestial avança!");
+
+        Inimigo zumbiBestial2 = new Inimigo("Zumbi de Sangue Bestial", 50, "1d8+2");
+        gerenciadorDeCombate.iniciarCombatePvM(jogador, zumbiBestial2);
+
+        if (jogador.estaVivo()) {
+            System.out.println("\nA criatura cai por terra. A porta para a proxima sala se abre.");
+            System.out.println("A vitória o fortalece. Você pode transcender novamente.");
+            jogador.habilitarTranscender();
+        } else {
+            System.out.println("\nVocê foi derrotado. Seu corpo se torna mais um experimento para o culto.");
+            System.out.println("\n--- Fim de Jogo ---");
+            return;
+        }
+
+        System.out.println("\nVoce entra em uma camara fria. O cheiro de sangue e podridão é intenso.");
+        System.out.println("No centro, uma massa disforme de corpos costurados se ergue. Uma Aberração de Carne!");
+
+        Inimigo aberracaoDeCarne = new Inimigo("Aberração de Carne", 100, "2d10");
+        gerenciadorDeCombate.iniciarCombatePvM(jogador, aberracaoDeCarne);
+
+        if (jogador.estaVivo()) {
+            System.out.println("\nA aberração se desfaz em uma poça de carne e sangue. O caminho para o salão principal está livre.");
+            System.out.println("A vitória o fortalece. Você pode transcender novamente.");
+            jogador.habilitarTranscender();
+        } else {
+            System.out.println("\nA criatura o domina e o absorve para sua massa disforme. Sua jornada termina aqui.");
+            System.out.println("\n--- Fim de Jogo ---");
+            return;
+        }
+
+        System.out.println("\nVoce finalmente chega ao salão principal da igreja.");
         System.out.println("no altar, uma figura imponente e grotesca se vira para voce. uma criatura que parece um minotauro de metal e carne.");
         System.out.println("a congregacao se ajoelha e grita em unissono: 'gloria a empapx!'");
 
