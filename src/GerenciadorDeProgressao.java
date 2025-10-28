@@ -78,7 +78,7 @@ public class GerenciadorDeProgressao {
             }
             // desbloqueio automatico do fuzil de precisao abutre no nex 50
             if (personagem.getNex() >= 50) {
-                Arma fuzilAbutre = new Arma("Fuzil de Precisão Abutre", "fuzil para os mais exigentes, portado originalmente por um verdadeiro abutre que nunca errou um misero tiro (mesmo tendo somente um braco!)", "2d10", "10d10", 12, 18);
+                Arma fuzilAbutre = new Arma("Fuzil de Precisão Abutre", "fuzil para os mais exigentes, portado originalmente por um verdadeiro abutre que nunca errou um misero tiro (mesmo tendo somente um braco!)", "2d10", "10d10", 12, 15);
                 // verifica se o personagem ja nao possui o fuzil abutre no inventario
                 boolean jaPossui = false;
                 for(Item item : personagem.getInventario().getItens()){

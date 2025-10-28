@@ -14,8 +14,8 @@ public class RitualData {
         // rituais basicos, sempre disponiveis
         rituais.add(new Ritual("Cicatrização", "uma onda de cura vinda diretamente do outro lado.", "3d8+3", 10, "1d4"));
         rituais.add(new Ritual("Eco Espiral", "eco eco eco eco........", "Copia ataque", 12, "1d6"));
-        rituais.add(new Ritual("Decadência", "decaenzia put*", "2d8+2", 10, "1d4"));
-        rituais.add(new Ritual("Ritual Vodum", "ritual utilizado por antigas tribos do norte da selma amazonica.", "2d6", 13, "2d4"));
+        rituais.add(new Ritual("Decadência", "decadencia, um forte ritual diretamente do outro lado", "2d8+2", 10, "1d4"));
+        rituais.add(new Ritual("Ritual Vodum", "ritual utilizado por antigas tribos do norte da selva amazonica.", "2d6", 13, "2d4"));
 
         // rituais que exigem um nex minimo
         if (nex >= 50) {

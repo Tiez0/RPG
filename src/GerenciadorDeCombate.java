@@ -8,6 +8,7 @@ public class GerenciadorDeCombate {
 
     private final Scanner scanner;
     private final String modoDeRolagem;
+    private int ultimoDanoInimigo = 0; // Armazena o último dano do inimigo
 
     public GerenciadorDeCombate(Scanner scanner, String modoDeRolagem) {
         this.scanner = scanner;
@@ -89,6 +90,7 @@ public class GerenciadorDeCombate {
 
         System.out.println(inimigo.getNome() + " causou " + dano + " de dano em " + jogador.getNome() + ".");
         jogador.receberDano(dano);
+        this.ultimoDanoInimigo = dano; // Armazena o último dano do inimigo
     }
 
     private void realizarTurnoJogador(Personagem atacante, Object alvo) {
@@ -191,7 +193,10 @@ public class GerenciadorDeCombate {
                 break;
             } else if (podeTranscender && acao == maxOpcao) {
                 Transcender.evoluir(atacante, scanner);
-                atacante.usarTranscender(); // desabilita a transcendencia apos o uso
+                // Não desabilita a transcendência se o alvo for o MALIGNO
+                if (alvo instanceof Inimigo && !((Inimigo) alvo).getNome().equals("MALIGNO")) {
+                    atacante.usarTranscender();
+                }
                 break;
             }
         }
@@ -318,38 +323,55 @@ public class GerenciadorDeCombate {
         if (melhorRolagem >= ritual.getSucessoMinimo()) {
             System.out.println("sucesso! o ritual " + ritual.getNome() + " e conjurado!");
             
-            Matcher m = Pattern.compile("(\\d+d\\d+(?:\\+\\d+)?)|(copia ataque)|(dano continuo)").matcher(ritual.getEfeito());
+            Ritual ritualParaUsar = ritual;
+            if (ritual.getNome().equals("Eco Espiral")) {
+                try {
+                    Ritual clone = (Ritual) ritual.clone();
+                    if (ultimoDanoInimigo > 0) {
+                        clone.setEfeito(String.valueOf(ultimoDanoInimigo));
+                        System.out.println("Eco Espiral copia o ultimo ataque do inimigo!");
+                    } else {
+                        clone.setEfeito("0"); // Nenhum dano a copiar
+                        System.out.println("Nenhum ataque inimigo para copiar com Eco Espiral.");
+                    }
+                    ritualParaUsar = clone;
+                } catch (CloneNotSupportedException e) {
+                    System.out.println("Erro ao clonar o ritual Eco Espiral.");
+                    return; // Sai se a clonagem falhar
+                }
+            }
+
+            String efeito = ritualParaUsar.getEfeito();
+            Matcher m = Pattern.compile("(\\d+d\\d+(?:\\+\\d+)?)|(\\d+)").matcher(efeito);
+
             if (m.find()) {
-                String expressao = m.group(1);
-                String efeitoEspecial = m.group(2) != null ? m.group(2) : m.group(3);
+                int valor;
+                if (m.group(1) != null) { // Expressão de dado (ex: 3d8+3)
+                    valor = rolarDadoCentralizado(m.group(1));
+                } else { // Número fixo (do Eco Espiral clonado)
+                    valor = Integer.parseInt(m.group(2));
+                }
 
-                if (expressao != null) {
-                    int valor = rolarDadoCentralizado(expressao);
-                    if (atacante.estaDebuffado() && !ritual.getNome().contains("Cicatrização")) {
-                        System.out.println(atacante.getNome() + " esta enfraquecido e causa metade do dano!");
-                        valor /= 2;
-                    }
+                if (atacante.estaDebuffado() && !ritualParaUsar.getNome().contains("Cicatrização")) {
+                    System.out.println(atacante.getNome() + " esta enfraquecido e causa metade do dano!");
+                    valor /= 2;
+                }
 
-                    if (ritual.getNome().contains("Cicatrização")) {
-                        atacante.receberCura(valor);
-                        System.out.println(atacante.getNome() + " curou " + valor + " pontos de vida!");
-                    } else {
-                        aplicarDano(alvo, valor);
-                        System.out.println("dano do ritual: " + valor);
-                    }
-                } else if (efeitoEspecial != null) {
-                    if (ritual.getNome().equals("Cinerária")) {
-                        if (alvo instanceof Personagem) {
-                            ((Personagem) alvo).aplicarCineraria();
-                        } else if (alvo instanceof Inimigo) {
-                            ((Inimigo) alvo).aplicarCineraria();
-                        }
-                    } else {
-                        System.out.println("efeito especial do ritual: " + efeitoEspecial);
-                    }
+                if (ritualParaUsar.getNome().contains("Cicatrização")) {
+                    atacante.receberCura(valor);
+                    System.out.println(atacante.getNome() + " curou " + valor + " pontos de vida!");
+                } else {
+                    aplicarDano(alvo, valor);
+                    System.out.println("dano do ritual: " + valor);
+                }
+            } else if (efeito.equalsIgnoreCase("Dano contínuo")) {
+                if (alvo instanceof Personagem) {
+                    ((Personagem) alvo).aplicarCineraria();
+                } else if (alvo instanceof Inimigo) {
+                    ((Inimigo) alvo).aplicarCineraria();
                 }
             } else {
-                System.out.println("o ritual " + ritual.getNome() + " nao tem um efeito de combate direto simulavel, mas foi conjurado com sucesso.");
+                System.out.println("o ritual " + ritualParaUsar.getNome() + " nao tem um efeito de combate direto simulavel, mas foi conjurado com sucesso.");
             }
 
         } else {
