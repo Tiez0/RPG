@@ -3,59 +3,58 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Representa a classe Combatente.
- * Focado em combate, com acesso a vários tipos de armas e técnicas de batalha.
+ * Representa o arquétipo Brutamontes.
+ * Focado na força bruta e no combate corporal, usando qualquer coisa como arma para esmagar os Perdidos.
  */
 public class Combatente extends Classe {
 
     @Override
     public String getNome() {
-        return "Combatente";
+        return "Brutamontes";
     }
 
     @Override
     public int getPVIniciais() {
-        // Valor base de PV por nível, sem o bônus de Vigor
+        // Brutamontes são os mais resistentes, feitos para aguentar e distribuir punição.
         return 4;
     }
 
     @Override
     public List<String> getPericiasTreinadas() {
         List<String> pericias = new ArrayList<>();
-        pericias.add("Luta ou Pontaria (escolher 1)");
-        pericias.add("Fortitude ou Reflexos (escolher 1)");
+        pericias.add("Briga");
+        pericias.add("Tolerância");
         
-        // Número fixo de perícias, já que não há mais Intelecto
-        pericias.add("Perícia à escolha 1");
-        pericias.add("Perícia à escolha 2");
+        pericias.add("Habilidade à escolha 1");
+        pericias.add("Habilidade à escolha 2");
         
         return pericias;
     }
 
     @Override
     public List<String> getProficiencias() {
-        return Arrays.asList("Armas simples", "Armas táticas", "Proteções leves");
+        return Arrays.asList("Armas simples", "Armas de pancada", "Proteções improvisadas");
     }
 
     @Override
     public List<String> getHabilidades(int nex) {
         List<String> habilidades = new ArrayList<>();
         if (nex >= 5) {
-            habilidades.add("Ataque especial");
+            habilidades.add("Ataque Feroz");
         }
         if (nex >= 10) {
-            habilidades.add("Habilidade de trilha");
+            habilidades.add("Técnica de Trilha de Brutamontes");
         }
         if (nex >= 15) {
-            habilidades.add("Poder de combatente");
+            habilidades.add("Fúria Incontrolável");
         }
         if (nex >= 20) {
-            habilidades.add("Aumento de atributo (agora um bônus fixo ou poder)");
+            habilidades.add("Pele Grossa (bônus de resistência)");
         }
         if (nex >= 25) {
-            habilidades.add("Ataque especial (Aprimorado)");
+            habilidades.add("Ataque Feroz (Aprimorado)");
         }
-        // A progressão continua...
+
         return habilidades;
     }
 }
