@@ -167,6 +167,14 @@ public class Main {
             System.out.println(jogador.getNome() + " se tornou mais um Perdido.");
         }
     }
+    
+    private static void realizarTurnoInimigo(Scanner scanner, Inimigo inimigo, Personagem jogador) {
+        System.out.println("\nÉ a vez de " + inimigo.getNome() + ".");
+        System.out.println(inimigo.getNome() + " ataca!");
+        int dano = rolarDadoCentralizado(scanner, inimigo.getDano());
+        jogador.receberDano(dano);
+        System.out.println(inimigo.getNome() + " causou " + dano + " de dano em " + jogador.getNome() + ".");
+    }
 
     private static void realizarTurnoJogador(Scanner scanner, Personagem atacante, Object alvo) {
         System.out.println("\nÉ a vez de " + atacante.getNome() + ".");
