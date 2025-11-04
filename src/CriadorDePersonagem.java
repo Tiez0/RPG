@@ -35,11 +35,11 @@ public class CriadorDePersonagem {
     }
 
     public static Personagem criarSuperSoldado(Scanner scanner, String modoDeRolagem) {
-        scanner.nextLine(); // consome a quebra de linha pendente do menu
+        scanner.nextLine();
         System.out.print("\ndigite o nome do super soldado: ");
         String nome = scanner.nextLine();
 
-        int nex = 5; // nex fixo para o modo historia
+        int nex = 5;
         System.out.println("\nnex definido em " + nex + "% (nivel de exposicao paranormal inicial).");
 
         Classe classe = escolherClasse(scanner);

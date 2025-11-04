@@ -64,6 +64,10 @@ public class GerenciadorDeCombate {
         System.out.println("\n--- fim de combate ---");
         if (jogador.estaVivo()) {
             System.out.println("o vencedor e: " + jogador.getNome() + "!");
+            // Adiciona a mensagem especial para o MALIGNO no modo Sandbox
+            if (inimigo.getNome().equals("MALIGNO")) {
+                System.out.println("\nMesmo derrotado, o MALIGNO sorri. Sua essência é onipresente, tecendo-se em cada linha de código.\nEle não pode ser verdadeiramente destruído, apenas estava brincando com voce, testando voce, a verdadeira forca do maligno jamais sera mensurada!, nem um long com 64 bits pode armazenar sua malignitude.");
+            }
         } else {
             System.out.println("o vencedor e: " + inimigo.getNome() + "!");
         }

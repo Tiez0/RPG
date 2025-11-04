@@ -181,7 +181,7 @@ public class ModoHistoria {
         } else {
             System.out.println("\nvoce pisca, a luz forte da tela do computador o cega por um instante.");
             System.out.println("o som de um teclado e a voz grave de um homem preenchem a sala.");
-            System.out.println("--- professor maligno: ...e e por isso que a heranca e um pilar fundamental da programacao orientada a objetos, senhor(a) " + jogador.getNome() + ". esta prestando atencao?");
+            System.out.println("--- professor maligno: ... oque mais importa em POO eh a pratica!!!, podemos tracar um paralelo com pecas.... " + jogador.getNome() + ". esta prestando atencao?");
             System.out.println("\nvoce olha ao redor. nao ha zumbis, nem bunkers, nem minotauros. apenas colegas de classe e um quadro branco cheio de codigo.");
             System.out.println("tudo nao passou de um sonho... ou sera que nao?");
             System.out.println("\n--- fim de jogo: o despertar ---");
