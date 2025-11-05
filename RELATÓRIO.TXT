@@ -1,0 +1,54 @@
+### RELATÓRIO DO PROJETO ###
+
+Este arquivo contém o relatório individual de contribuição e autoavaliação de cada membro do grupo, conforme as regras estabelecidas.
+
+---
+### OBSERVAÇÃO SOBRE A COMPOSIÇÃO DO GRUPO (se aplicável) ###
+
+[Preencha aqui APENAS se o grupo for formado por alunos de diferentes turmas práticas do mesmo professor. Indique os nomes dos alunos e suas respectivas turmas. Caso contrário, pode apagar esta seção.]
+
+
+
+---
+### RELATÓRIOS INDIVIDUAIS ###
+
+PEDRO TIEZO SALES SHIMIZU:
+
+as maiores dificuldades do codigo veio por um dos diferenciais que eu quis colocar, no caso um sistema que eu ja tinha experiencia, sendo ele o sistema usado em ordem paranormal,
+eu nao tinha parado para pensar quao complexo era a implementacao das armas, rituais, mecanicas de trancender, aprimoramento de personagens, atributos entre outros, tambem como
+todo projeto surgiram inprevistos, sendo ele meu computador parar de ligar no meio dele, fazendo eu perder parte do codigo que eu nao tinha subido no GITHUB, mas no final
+eu acabei comprando um computador temporario e deu tudo certo. Mesmo com enormes dificuldades de implementar o basico do sistema, eu senti que a jogabilidade ficou bem satisfatoria
+e intuitiva. Desde ja agradeco ao professor Andre por toda sua calma em responder minhas perguntas que mesmo sendo mutias vezes bobas acabavam por me confundir, eu guardo esse projeto
+com muito carinho pois sinto que consegui fazer algo bom, que eu gostei muito de fazer, e acabei estudando de uma maneira diferente.
+
+---
+
+*   Pedro Tiezo Sales Shimizu
+*   **Contribuições no Projeto:**
+    *   [estudo sobre o sistema do RPG por meio do livro de regras, escolha de armas/imigos/feiticos a serem implementados, implementacao dos mesmos
+    organizacao e versionamento do codigo via github, implementacao do modo sandbox,pvp,pvm e parte da historia, balanciamento das armas, implementacao de mecanicas de dano
+    critico, implementacao dos dados via terminal, implementacao do critico minimo diminuindo ao decorrer do nex, ideia do plot do modo historia, testes no modo sandbox com
+    outros jogadores de RPG]
+*   **Autoavaliação (Nota de 0 a 10):** [8]
+*   **Justificativa da Nota:** [eu me senti bem satisfeito com o resultado final e me diverti muito aprendendo como fazer esse projeto, mas sinto que poderia ter mimplementado mais
+dinamicas, me faltou criatividade! Alem disso demorei mais tempo que o necessario, pois muitas coisas eu acabava recorrendo a pesquisa para saber como exectar uma mecanica, como
+o debuff de dano. Sinto que melhorei muito desde o inicio do projeto mas ainda nao estao o meu maximo potencial. Por isso o maximo que eu posso em dar
+eh um 8]
+
+---
+
+
+* Thiago Volponi Cosmo
+ * Contribuições no Projeto:
+   * Testes e Garantia de Qualidade (QA): Realizei testes extensivos em diferentes módulos do projeto (como o modo sandbox, PvP e PvM) para identificar falhas lógicas, bugs de execução e problemas de usabilidade.
+   * Correção de Bugs: Atuei na identificação, isolamento e correção de diversos bugs relatados durante a fase de testes, garantindo a estabilidade e a funcionalidade correta de mecânicas essenciais como o cálculo de dano, aplicação de debuffs e o funcionamento dos dados.
+   * Modo História: Fui responsável pela implementação do plot e da sequência de eventos do Modo História, estruturando o fluxo narrativo.
+ * Autoavaliação (Nota de 0 a 10): [7]
+ * Justificativa da Nota: Minha contribuição principal foi garantir a qualidade e a funcionalidade do produto final por meio dos testes e correção de falhas, além de dar vida à narrativa do Modo História. Sinto que meu trabalho foi fundamental para a estabilidade do código, e garantindo que as mecânicas implementadas funcionassem corretamente. No entanto, minha nota reflete a minha percepção de que, apesar de ter cumprido minhas tarefas, poderia ter sido mais proativo(a) na implementação de novas classes/funcionalidades. O aprendizado em Programação Orientada a Objetos (POO) foi imenso, mas ainda sinto que tenho espaço para melhorar minha eficiência na correção de problemas e no entendimento de estruturas mais complexas.
+
+RELATÓRIOS INDIVIDUAIS
+
+Thiago Volponi Cosmo:
+
+As minhas maiores dificuldades vieram na fase de correção de bugs, pois exigiu uma leitura atenta e uma compreensão profunda do código para identificar a origem exata dos erros sem criar novos problemas. A estruturação do Modo História também foi um desafio interessante; garantir que a experiência narrativa fosse fluida, ao mesmo tempo que se alinhava com as mecânicas do sistema de RPG, demandou um equilíbrio delicado.
+
